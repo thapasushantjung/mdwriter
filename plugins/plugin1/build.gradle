@@ -1,0 +1,11 @@
+dependencies {
+  // compileOnly important!!! We do not want to put the api into the zip file since the main program has it already!
+  compileOnly project(':api')
+  compileOnly(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}") {
+    exclude group: "org.slf4j"
+  }
+  annotationProcessor(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}")
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+  implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+  testImplementation group: 'junit', name: 'junit', version: '4.+'
+}
