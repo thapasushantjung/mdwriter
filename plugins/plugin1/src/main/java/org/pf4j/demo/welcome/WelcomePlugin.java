@@ -22,38 +22,38 @@ import org.slf4j.LoggerFactory;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
-import org.pf4j.demo.api.Greeting;
+import com.mdwriter.api.Greeting;
 
 /**
  * @author Decebal Suiu
  */
 public class WelcomePlugin extends Plugin {
 
-    private static final Logger logger = LoggerFactory.getLogger(WelcomePlugin.class);
+  private static final Logger logger = LoggerFactory.getLogger(WelcomePlugin.class);
 
-    public WelcomePlugin(PluginWrapper wrapper) {
-        super(wrapper);
-    }
+  public WelcomePlugin(PluginWrapper wrapper) {
+    super(wrapper);
+  }
+
+  @Override
+  public void start() {
+    logger.info("WelcomePlugin.start()");
+    logger.info(StringUtils.upperCase("WelcomePlugin"));
+  }
+
+  @Override
+  public void stop() {
+    logger.info("WelcomePlugin.stop()");
+  }
+
+  @Extension
+  public static class WelcomeGreeting implements Greeting {
 
     @Override
-    public void start() {
-        logger.info("WelcomePlugin.start()");
-        logger.info(StringUtils.upperCase("WelcomePlugin"));
+    public String getGreeting() {
+      return "Welcome";
     }
 
-    @Override
-    public void stop() {
-        logger.info("WelcomePlugin.stop()");
-    }
-
-    @Extension
-    public static class WelcomeGreeting implements Greeting {
-
-        @Override
-        public String getGreeting() {
-            return "Welcome";
-        }
-
-    }
+  }
 
 }

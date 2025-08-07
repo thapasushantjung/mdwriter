@@ -1,5 +1,5 @@
-include 'api'
-include 'app'
+include 'mdwriter-api'
+include 'mdwriter-app'
 
 include 'plugins'
 

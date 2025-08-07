@@ -15,12 +15,12 @@
  */
 package org.pf4j.demo.kotlin
 
+import com.mdwriter.api.Greeting
 import org.apache.commons.lang3.StringUtils
-import org.slf4j.LoggerFactory
 import org.pf4j.Extension
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
-import org.pf4j.demo.api.Greeting
+import org.slf4j.LoggerFactory
 
 /**
  * A sample plugin written in Kotlin
@@ -28,21 +28,21 @@ import org.pf4j.demo.api.Greeting
  * @author Anindya Chatterjee
  */
 class KotlinPlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
-    private val logger = LoggerFactory.getLogger(KotlinPlugin::class.java)
+  private val logger = LoggerFactory.getLogger(KotlinPlugin::class.java)
 
-    override fun start() {
-        logger.info("KotlinPlugin.start()")
-        logger.info(StringUtils.upperCase("KotlinPlugin"))
-    }
+  override fun start() {
+    logger.info("KotlinPlugin.start()")
+    logger.info(StringUtils.upperCase("KotlinPlugin"))
+  }
 
-    override fun stop() {
-        logger.info("KotlinPlugin.stop()")
-    }
+  override fun stop() {
+    logger.info("KotlinPlugin.stop()")
+  }
 }
 
 @Extension
 class KotlinGreeting : Greeting {
-    override fun getGreeting(): String {
-        return "KotlinGreetings"
-    }
+  override fun getGreeting(): String {
+    return "KotlinGreetings"
+  }
 }

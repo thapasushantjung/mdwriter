@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-  compileOnly project(':api')
+  compileOnly project(':mdwriter-api')
   compileOnly(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}") {
     exclude group: "org.slf4j"
   }
