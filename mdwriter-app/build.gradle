@@ -1,6 +1,6 @@
 apply plugin: 'application'
 
-mainClassName = 'com.mdwriter.MainApp'
+mainClassName = 'com.mdwriter.app.MainApp'
 run {
   systemProperty 'pf4j.pluginsDir', '../build/plugins'
 }
