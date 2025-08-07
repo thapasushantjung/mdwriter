@@ -9,6 +9,6 @@ subprojects {
 // plugin location
 ext.pluginsDir = rootProject.buildDir.path + '/plugins'
 
-task build(dependsOn: [':app:uberjar'])
+task build(dependsOn: [':mdwriter-app:uberjar'])
 
 

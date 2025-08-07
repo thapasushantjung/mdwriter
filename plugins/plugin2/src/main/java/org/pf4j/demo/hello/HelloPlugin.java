@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
-import org.pf4j.demo.api.Greeting;
+import com.mdwriter.api.Greeting;
 
 /**
  * A very simple plugin.
@@ -28,30 +28,30 @@ import org.pf4j.demo.api.Greeting;
  * @author Decebal Suiu
  */
 public class HelloPlugin extends Plugin {
-    private static final Logger logger = LoggerFactory.getLogger(HelloPlugin.class);
+  private static final Logger logger = LoggerFactory.getLogger(HelloPlugin.class);
 
-    public HelloPlugin(PluginWrapper wrapper) {
-        super(wrapper);
-    }
+  public HelloPlugin(PluginWrapper wrapper) {
+    super(wrapper);
+  }
+
+  @Override
+  public void start() {
+    logger.info("HelloPlugin.start()");
+  }
+
+  @Override
+  public void stop() {
+    logger.info("HelloPlugin.stop()");
+  }
+
+  @Extension(ordinal = 1)
+  public static class HelloGreeting implements Greeting {
 
     @Override
-    public void start() {
-        logger.info("HelloPlugin.start()");
+    public String getGreeting() {
+      return "Hello";
     }
 
-    @Override
-    public void stop() {
-        logger.info("HelloPlugin.stop()");
-    }
-
-    @Extension(ordinal=1)
-    public static class HelloGreeting implements Greeting {
-
-        @Override
-        public String getGreeting() {
-            return "Hello";
-        }
-
-    }
+  }
 
 }

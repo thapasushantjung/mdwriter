@@ -1,6 +1,6 @@
 dependencies {
   // compileOnly important!!! We do not want to put the api into the zip file since the main program has it already!
-  compileOnly project(':api')
+  compileOnly project(':mdwriter-api')
   compileOnly(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}") {
     exclude group: "org.slf4j"
   }
