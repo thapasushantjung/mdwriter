@@ -1,10 +1,15 @@
-apply plugin: 'application'
-
+plugins {
+  id 'application'
+  id 'org.openjfx.javafxplugin' version '0.1.0' 
+}
 mainClassName = 'com.mdwriter.app.MainApp'
 run {
   systemProperty 'pf4j.pluginsDir', '../build/plugins'
 }
-
+javafx {
+  version = "21.0.1"
+  modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
 dependencies {
   implementation project(':mdwriter-api')
   implementation group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}"
@@ -17,6 +22,7 @@ dependencies {
 
 task uberjar(type: Jar, dependsOn: ['compileJava']) {
   zip64 true
+duplicatesStrategy = DuplicatesStrategy.EXCLUDE
   from configurations.runtimeClasspath.asFileTree.files.collect {
     exclude "META-INF/*.SF"
     exclude "META-INF/*.DSA"

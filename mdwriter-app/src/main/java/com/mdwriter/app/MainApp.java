@@ -26,6 +26,14 @@ import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
 import org.pf4j.PluginWrapper;
 import com.mdwriter.api.Greeting;
+
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
 import java.util.List;
 
 /**
@@ -33,12 +41,25 @@ import java.util.List;
  *
  * @author Decebal Suiu
  */
-public class MainApp {
+public class MainApp extends Application {
   private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
+
+  private Parent createContent() {
+    return new StackPane(new Text("Hello World"));
+  }
+
+  @Override
+  public void start(Stage stage) throws Exception {
+    stage.setScene(new Scene(createContent(), 300, 300));
+    stage.show();
+
+  }
 
   public static void main(String[] args) {
     // print logo
     printLogo();
+
+    launch(args);
 
     // create the plugin manager
     final PluginManager pluginManager = new DefaultPluginManager() {
