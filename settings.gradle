@@ -2,7 +2,5 @@ include 'mdwriter-api'
 include 'mdwriter-app'
 
 include 'plugins'
-
 include 'plugins:plugin1'
 include 'plugins:plugin2'
-include 'plugins:plugin3'

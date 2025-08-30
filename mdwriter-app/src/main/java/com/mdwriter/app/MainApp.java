@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2012-present the original author or authors.
  *
@@ -26,7 +25,6 @@ import org.kordamp.ikonli.*;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
 import org.pf4j.PluginWrapper;
-import com.mdwriter.api.Greeting;
 import atlantafx.base.theme.PrimerDark;
 import atlantafx.base.theme.PrimerLight;
 import atlantafx.base.theme.Styles;
@@ -117,8 +115,9 @@ public class MainApp extends Application {
     fontSizeCmb.getSelectionModel().select(6);
 
     final var toolbar2 = new ToolBar(
-        fontFamilyCmb,
-        fontSizeCmb,
+        toggleIconButton(Feather.BELL),
+        toggleIconButton(Feather.CORNER_UP_LEFT),
+        toggleIconButton(Feather.CORNER_UP_RIGHT, true),
         new Separator(Orientation.VERTICAL),
         toggleIconButton(Feather.BOLD, true),
         toggleIconButton(Feather.ITALIC),
@@ -129,7 +128,9 @@ public class MainApp extends Application {
         toggleIconButton(Feather.ALIGN_RIGHT),
         new Separator(Orientation.VERTICAL),
         iconButton(Feather.IMAGE));
-
+    MenuBar menu = new MenuBar();
+    var toolbar5 = menu.toolbar;
+    ToggleButton js = toggleIconButton(Feather.AWARD);
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(MainApp.class.getResource("Navbar.fxml"));
     // HBox hbox = loader.<HBox>load();
@@ -146,7 +147,7 @@ public class MainApp extends Application {
 
     VBox root = new VBox();
     root.setPadding(new javafx.geometry.Insets(10));
-    root.getChildren().addAll(toolbar2, hbox);
+    root.getChildren().addAll(toolbar5, hbox);
     VBox.setVgrow(hbox, Priority.ALWAYS);
     return root;
   }
@@ -164,68 +165,6 @@ public class MainApp extends Application {
     // print logo
     launch(args);
 
-    // create the plugin manager
-    final PluginManager pluginManager = new DefaultPluginManager() {
-      @Override
-      protected CompoundPluginDescriptorFinder createPluginDescriptorFinder() {
-        return new CompoundPluginDescriptorFinder()
-            // Demo is using the Manifest file
-            // PropertiesPluginDescriptorFinder is commented out just to avoid error log
-            // .add(new PropertiesPluginDescriptorFinder())
-            .add(new ManifestPluginDescriptorFinder());
-      }
-    };
-
-    // load the plugins
-    pluginManager.loadPlugins();
-
-    // enable a disabled plugin
-    // pluginManager.enablePlugin("welcome-plugin");
-
-    // start (active/resolved) the plugins
-    pluginManager.startPlugins();
-
-    logger.info("Plugindirectory: ");
-    logger.info("\t" + System.getProperty("pf4j.pluginsDir", "plugins") + "\n");
-
-    // retrieves the extensions for Greeting extension point
-    List<Greeting> greetings = pluginManager.getExtensions(Greeting.class);
-    logger.info(
-        String.format("Found %d extensions for extension point '%s'", greetings.size(), Greeting.class.getName()));
-    for (Greeting greeting : greetings) {
-      logger.info(">>> " + greeting.getGreeting());
-    }
-
-    // // print extensions from classpath (non plugin)
-    // logger.info(String.format("Extensions added by classpath:"));
-    // Set<String> extensionClassNames = pluginManager.getExtensionClassNames(null);
-    // for (String extension : extensionClassNames) {
-    // logger.info(" " + extension);
-    // }
-
-    // print extensions for each started plugin
-    List<PluginWrapper> startedPlugins = pluginManager.getStartedPlugins();
-    for (PluginWrapper plugin : startedPlugins) {
-      String pluginId = plugin.getDescriptor().getPluginId();
-      logger.info(String.format("Extensions added by plugin '%s':", pluginId));
-      // extensionClassNames = pluginManager.getExtensionClassNames(pluginId);
-      // for (String extension : extensionClassNames) {
-      // logger.info(" " + extension);
-      // }
-    }
-
-    // stop the plugins
-    pluginManager.stopPlugins();
-    /*
-     * Runtime.getRuntime().addShutdownHook(new Thread() {
-     * 
-     * @Override
-     * public void run() {
-     * pluginManager.stopPlugins();
-     * }
-     * 
-     * });
-     */
   }
 
   private static void printLogo() {

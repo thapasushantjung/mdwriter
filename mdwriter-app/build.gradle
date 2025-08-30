@@ -12,13 +12,13 @@ javafx {
 }
 dependencies {
   implementation project(':mdwriter-api')
-  implementation 'org.kordamp.ikonli:ikonli-javafx:12.4.0'
   implementation group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}"
   annotationProcessor(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}")
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
   implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
-  implementation 'io.github.mkpaz:atlantafx-base:2.1.0'
   testImplementation group: 'junit', name: 'junit', version: '4.+'
+  implementation 'org.kordamp.ikonli:ikonli-javafx:12.4.0'
+  implementation 'io.github.mkpaz:atlantafx-base:2.1.0'
 implementation 'org.kordamp.ikonli:ikonli-feather-pack:12.4.0'
 }
 

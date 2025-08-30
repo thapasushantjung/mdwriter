@@ -1,16 +1,20 @@
 subprojects {
   jar {
     manifest {
-      attributes 'Plugin-Class': "${pluginClass}",
-          'Plugin-Id': "${pluginId}",
-          'Plugin-Version': "${archiveVersion}",
-          'Plugin-Provider': "${pluginProvider}",
-          'Plugin-Dependencies': "${pluginDependencies}"
+      attributes 'Plugin-Class': pluginClass,
+          'Plugin-Id': pluginId,
+          'Plugin-Version': archiveVersion,
+          'Plugin-Provider': pluginProvider,
+          'Plugin-Dependencies': pluginDependencies
     }
   }
 
+  dependencies {
+    compileOnly project(':mdwriter-api')
+  }
+
   task plugin(type: Jar) {
-    archiveBaseName = "plugin-${pluginId}"
+    archiveBaseName = "plugin-${project.pluginId}"
     into('classes') {
       with jar
     }

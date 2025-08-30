@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2012-present the original author or authors.
  *
@@ -15,13 +16,28 @@
  */
 package com.mdwriter.api;
 
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.pf4j.ExtensionPoint;
+
+import atlantafx.base.theme.Styles;
+import javafx.scene.control.Button;
 
 /**
  * @author Decebal Suiu
  */
-public interface Greeting extends ExtensionPoint {
+public interface ToolBarButton extends ExtensionPoint {
 
-  String getGreeting();
+  Ikon getIcon();
 
+  String changeText(String text);
+
+  default Button iconButton() {
+    var btn = new Button(null);
+    if (this.getIcon() != null) {
+      btn.setGraphic(new FontIcon(this.getIcon()));
+    }
+    btn.getStyleClass().addAll(Styles.BUTTON_ICON);
+    return btn;
+  }
 }

@@ -17,20 +17,24 @@ package org.pf4j.demo.hello;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mdwriter.api.ToolBarButton;
+
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.feather.Feather;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
-import com.mdwriter.api.Greeting;
 
 /**
  * A very simple plugin.
  *
  * @author Decebal Suiu
  */
-public class HelloPlugin extends Plugin {
-  private static final Logger logger = LoggerFactory.getLogger(HelloPlugin.class);
+public class Plugin1Plugin extends Plugin {
+  private static final Logger logger = LoggerFactory.getLogger(Plugin1Plugin.class);
 
-  public HelloPlugin(PluginWrapper wrapper) {
+  public Plugin1Plugin(PluginWrapper wrapper) {
     super(wrapper);
   }
 
@@ -45,13 +49,17 @@ public class HelloPlugin extends Plugin {
   }
 
   @Extension(ordinal = 1)
-  public static class HelloGreeting implements Greeting {
-
+  public static class BoldButton implements ToolBarButton {
     @Override
-    public String getGreeting() {
-      return "Hello";
+    public Ikon getIcon() {
+      return Feather.BOLD;
+
     }
 
+    @Override
+    public String changeText(String text) {
+      return "**" + text + "**";
+    }
   }
 
 }
