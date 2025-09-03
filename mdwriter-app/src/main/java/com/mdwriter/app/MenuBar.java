@@ -24,7 +24,7 @@ public class MenuBar {
 
   private static final Logger logger = LoggerFactory.getLogger(MenuBar.class);
 
-  ToolBar toolbar = new ToolBar();
+  List<ToolBarButton> buttons;
 
   public MenuBar() {
 
@@ -52,13 +52,9 @@ public class MenuBar {
     logger.info("\t" + System.getProperty("pf4j.pluginsDir", "plugins") + "\n");
 
     // retrieves the extensions for Greeting extension point
-    List<ToolBarButton> buttons = pluginManager.getExtensions(ToolBarButton.class);
+    buttons = pluginManager.getExtensions(ToolBarButton.class);
     logger.info(
         String.format("Found %d extensions for extnsion point '%s'", buttons.size(), ToolBarButton.class.getName()));
-    for (ToolBarButton button : buttons) {
-      logger.info(">>> " + button.iconButton());
-      this.toolbar.getItems().add(button.iconButton());
-    }
 
     // // print extensions from classpath (non plugin)
     // logger.info(String.format("Extensions added by classpath:"));

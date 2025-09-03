@@ -21,6 +21,9 @@ import org.pf4j.ManifestPluginDescriptorFinder;
 import org.pf4j.PropertiesPluginDescriptorFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mdwriter.api.ToolBarButton;
+
 import org.kordamp.ikonli.*;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
@@ -97,6 +100,7 @@ public class MainApp extends Application {
     return btn;
   }
 
+  ToolBar toolbar = new ToolBar();
   private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
 
   private Parent createContent() throws Exception {
@@ -129,7 +133,11 @@ public class MainApp extends Application {
         new Separator(Orientation.VERTICAL),
         iconButton(Feather.IMAGE));
     MenuBar menu = new MenuBar();
-    var toolbar5 = menu.toolbar;
+    List<ToolBarButton> buttons = menu.buttons;
+    for (ToolBarButton button : buttons) {
+      logger.info(">>> " + button.iconButton());
+      this.toolbar.getItems().add(button.iconButton());
+    }
     ToggleButton js = toggleIconButton(Feather.AWARD);
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(MainApp.class.getResource("Navbar.fxml"));
@@ -147,7 +155,7 @@ public class MainApp extends Application {
 
     VBox root = new VBox();
     root.setPadding(new javafx.geometry.Insets(10));
-    root.getChildren().addAll(toolbar5, hbox);
+    root.getChildren().addAll(toolbar, hbox);
     VBox.setVgrow(hbox, Priority.ALWAYS);
     return root;
   }

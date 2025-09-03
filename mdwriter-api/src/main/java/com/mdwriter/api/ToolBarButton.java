@@ -38,6 +38,7 @@ public interface ToolBarButton extends ExtensionPoint {
       btn.setGraphic(new FontIcon(this.getIcon()));
     }
     btn.getStyleClass().addAll(Styles.BUTTON_ICON);
+    btn.setUserData(this);
     return btn;
   }
 }
