@@ -1,6 +1,6 @@
-package com.mdwriter.app;
 
-import org.slf4j.Logger;
+package com.mdwriter.app.plugins;
+
 import java.util.List;
 import org.pf4j.CompoundPluginDescriptorFinder;
 import org.pf4j.DefaultPluginManager;
@@ -8,11 +8,19 @@ import org.pf4j.ManifestPluginDescriptorFinder;
 import org.pf4j.PluginManager;
 import com.mdwriter.api.ToolBarButton;
 
-public class MenuBar {
+public class ButtonPlugin {
 
-  List<ToolBarButton> buttons;
+  public List<ToolBarButton> buttons;
 
-  public MenuBar() {
+  /**
+   * MenuBar class to load toolbar buttons using PF4J plugins.
+   * 
+   * This class initializes buttons with their respective icons and
+   * functionalities.
+   *
+   *
+   */
+  public ButtonPlugin() {
 
     final PluginManager pluginManager = new DefaultPluginManager() {
       @Override

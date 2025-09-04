@@ -40,12 +40,12 @@ public class BoldButtonPlugin extends Plugin {
 
   @Override
   public void start() {
-    logger.info("HelloPlugin.start()");
+    logger.info("BoldPlugin.start()");
   }
 
   @Override
   public void stop() {
-    logger.info("HelloPlugin.stop()");
+    logger.info("BoldPlugin.stop()");
   }
 
   @Extension(ordinal = 1)

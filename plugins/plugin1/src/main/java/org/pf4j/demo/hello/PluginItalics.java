@@ -31,34 +31,34 @@ import org.pf4j.PluginWrapper;
  *
  * @author Decebal Suiu
  */
-public class Plugin1Plugin extends Plugin {
-  private static final Logger logger = LoggerFactory.getLogger(Plugin1Plugin.class);
+public class PluginItalics extends Plugin {
+  private static final Logger logger = LoggerFactory.getLogger(PluginItalics.class);
 
-  public Plugin1Plugin(PluginWrapper wrapper) {
+  public PluginItalics(PluginWrapper wrapper) {
     super(wrapper);
   }
 
   @Override
   public void start() {
-    logger.info("HelloPlugin.start()");
+    logger.info("ItalicsPlugin.start()");
   }
 
   @Override
   public void stop() {
-    logger.info("HelloPlugin.stop()");
+    logger.info("ItalicsPlugin.stop()");
   }
 
   @Extension(ordinal = 1)
   public static class BoldButton implements ToolBarButton {
     @Override
     public Ikon getIcon() {
-      return Feather.BOLD;
+      return Feather.ITALIC;
 
     }
 
     @Override
     public String changeText(String text) {
-      return "**" + text + "**";
+      return "*" + text + "*";
     }
   }
 

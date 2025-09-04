@@ -1,6 +1,8 @@
 package com.mdwriter.app;
 
 import com.mdwriter.api.ToolBarButton;
+import com.mdwriter.app.plugins.ButtonPlugin;
+
 import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
 import javafx.scene.Parent;
@@ -22,26 +24,38 @@ import java.util.List;
  */
 public class MainApp extends Application {
 
-  // A toolbar to hold the buttons
   ToolBar toolbar = new ToolBar();
 
   private Parent createContent() throws Exception {
 
-    MenuBar menu = new MenuBar();
-    List<ToolBarButton> buttons = menu.buttons;
-    for (ToolBarButton button : buttons) {
-      this.toolbar.getItems().add(button.iconButton());
-    }
     TextArea textarea = new TextArea();
     TextArea textarea2 = new TextArea();
-    HBox hbox = new HBox(textarea, textarea2);
+    ButtonPlugin menu = new ButtonPlugin();
+    List<ToolBarButton> buttons = menu.buttons;
+    for (ToolBarButton button : buttons) {
+
+      System.out.println("Button: " + button.getIcon());
+      var iconButton = button.iconButton();
+
+      this.toolbar.getItems().add(iconButton);
+
+      iconButton.setOnMousePressed(event -> {
+        String selectedText = textarea.getSelectedText();
+
+        String changedText = button.changeText(selectedText);
+
+        textarea.replaceSelection(changedText);
+      });
+    }
+    // Textarea and Webview Container
+    HBox container = new HBox(textarea, textarea2);
     HBox.setHgrow(textarea, Priority.ALWAYS);
     HBox.setHgrow(textarea2, Priority.ALWAYS);
 
     VBox root = new VBox();
     root.setPadding(new javafx.geometry.Insets(10));
-    root.getChildren().addAll(toolbar, hbox);
-    VBox.setVgrow(hbox, Priority.ALWAYS);
+    root.getChildren().addAll(toolbar, container);
+    VBox.setVgrow(container, Priority.ALWAYS);
     return root;
   }
 
