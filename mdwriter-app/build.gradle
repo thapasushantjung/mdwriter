@@ -20,6 +20,7 @@ dependencies {
   implementation 'org.kordamp.ikonli:ikonli-javafx:12.4.0'
   implementation 'io.github.mkpaz:atlantafx-base:2.1.0'
 implementation 'org.kordamp.ikonli:ikonli-feather-pack:12.4.0'
+ implementation 'com.vladsch.flexmark:flexmark:0.64.8' 
 }
 
 task uberjar(type: Jar, dependsOn: ['compileJava']) {
