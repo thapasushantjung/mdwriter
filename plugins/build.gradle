@@ -1,9 +1,10 @@
 subprojects {
+  // This part is correct and remains the same.
   jar {
     manifest {
       attributes 'Plugin-Class': pluginClass,
           'Plugin-Id': pluginId,
-          'Plugin-Version': archiveVersion,
+          'Plugin-Version': version, // Use 'version' which is standard in gradle.properties
           'Plugin-Provider': pluginProvider,
           'Plugin-Dependencies': pluginDependencies
     }
@@ -14,14 +15,19 @@ subprojects {
   }
 
   task plugin(type: Jar) {
+    manifest.from jar.manifest
+
     archiveBaseName = "plugin-${project.pluginId}"
+    archiveExtension = 'zip'
+
     into('classes') {
-      with jar
+        from sourceSets.main.output
     }
+
+    // Copy dependencies into a 'lib' folder
     into('lib') {
       from configurations.runtimeClasspath
     }
-    archiveExtension ='zip'
   }
 
   task assemblePlugin(type: Copy) {

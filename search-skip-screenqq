@@ -1,0 +1,14 @@
+[33ma4230b3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m plugin folder restructured
+[33m9d93615[m added webview and markdown parserer
+[33m6cbc8b6[m todo: markdown parser and webview
+[33m157800a[m Code Cleanup and two plugins successfully implemented
+[33m5e1c110[m  A littl code cleanup
+[33mdcaf5bd[m button set object completed
+[33m9d8623f[m buttons plugins addes
+[33m8b9d5b2[m Basic Layout of app done
+[33m3e562f1[m Merge pull request #2 from thapasushantjung/javafxsetup
+[33ma0ecc39[m[33m ([m[1;31morigin/javafxsetup[m[33m)[m added javafx
+[33mec4d71c[m Merge pull request #1 from thapasushantjung/javafxsetup
+[33me298189[m fixed mdwriter mainclassname problem
+[33mba5abc8[m folder restructuring finished
+[33mfc7bd24[m base setup from official pf4j
