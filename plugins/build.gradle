@@ -41,3 +41,4 @@ task assemblePlugins(type: Copy) {
 }
 
 build.dependsOn project.tasks.assemblePlugins
+
