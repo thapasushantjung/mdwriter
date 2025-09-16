@@ -36,14 +36,10 @@ public class MainApp extends Application {
     HBox container = new HBox(textarea, webview);
     HBox.setHgrow(textarea, Priority.ALWAYS);
 
-    TabPane tabPane = new TabPane();
-    Tab tab1 = new Tab("Dashboard");
     VBox root = new VBox();
     root.setPadding(new javafx.geometry.Insets(10));
     root.getChildren().addAll(toolBar.toolbar, container);
 
-    tab1.setContent(root);
-    tabPane.getTabs().add(tab1);
     StackPane stack = new StackPane();
     stack.getChildren().addAll(root, modalPane);
 
