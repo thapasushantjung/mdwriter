@@ -1,6 +1,5 @@
 package com.mdwriter.app;
 
-import atlantafx.base.controls.ModalPane;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 

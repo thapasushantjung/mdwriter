@@ -19,7 +19,6 @@ package com.mdwriter.api;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.pf4j.ExtensionPoint;
-
 import atlantafx.base.theme.Styles;
 import javafx.scene.control.Button;
 
