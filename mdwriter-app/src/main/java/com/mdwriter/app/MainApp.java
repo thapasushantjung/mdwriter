@@ -2,23 +2,37 @@ package com.mdwriter.app;
 
 import com.mdwriter.api.ToolBarButton;
 import com.mdwriter.app.plugins.ButtonPlugin;
+import com.mdwriter.app.Dialog;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Dracula;
+import atlantafx.base.theme.NordDark;
+import atlantafx.base.theme.NordLight;
 import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.Styles;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import java.util.List;
+
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  *
@@ -29,6 +43,7 @@ import java.util.List;
  */
 public class MainApp extends Application {
 
+  private final ModalPane modalPane = new ModalPane();
   ToolBar toolbar = new ToolBar();
 
   private Parent createContent() throws Exception {
@@ -64,15 +79,33 @@ public class MainApp extends Application {
       String html = renderer.render(document);
       webview.getEngine().loadContent(html);
     });
+    var normalBtn = new Button(null, new FontIcon(Feather.SUN));
+    HBox menuBar = new HBox();
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    menuBar.getChildren().addAll(toolbar, spacer, normalBtn);
+    var dialog = new ThemeSelector().themes();
+
+    normalBtn.setOnAction((evt -> modalPane.show(dialog)));
     HBox container = new HBox(textarea, webview);
     HBox.setHgrow(textarea, Priority.ALWAYS);
     HBox.setHgrow(textarea2, Priority.ALWAYS);
 
+    StackPane stack = new StackPane();
+
     VBox root = new VBox();
     root.setPadding(new javafx.geometry.Insets(10));
-    root.getChildren().addAll(toolbar, container);
+    root.getChildren().addAll(menuBar, container);
+    stack.getChildren().addAll(root, modalPane);
+    modalPane.setId("modalPane");
+    modalPane.displayProperty().addListener((obs, old, val) -> {
+      if (!val) {
+        modalPane.setAlignment(Pos.CENTER);
+        modalPane.usePredefinedTransitionFactories(null);
+      }
+    });
     VBox.setVgrow(container, Priority.ALWAYS);
-    return root;
+    return stack;
     // :TODO - Add WebView and Markdown Parser
   }
 
