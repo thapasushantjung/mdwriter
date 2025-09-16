@@ -2,24 +2,19 @@ package com.mdwriter.app;
 
 import com.mdwriter.api.ToolBarButton;
 import com.mdwriter.app.plugins.ButtonPlugin;
-import com.mdwriter.app.Dialog;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
 import atlantafx.base.controls.ModalPane;
-import atlantafx.base.theme.Dracula;
-import atlantafx.base.theme.NordDark;
-import atlantafx.base.theme.NordLight;
 import atlantafx.base.theme.PrimerDark;
-import atlantafx.base.theme.PrimerLight;
-import atlantafx.base.theme.Styles;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
@@ -44,59 +39,40 @@ import org.kordamp.ikonli.javafx.FontIcon;
 public class MainApp extends Application {
 
   private final ModalPane modalPane = new ModalPane();
-  ToolBar toolbar = new ToolBar();
 
   private Parent createContent() throws Exception {
 
-    TextArea textarea = new TextArea();
-    TextArea textarea2 = new TextArea();
     WebView webview = new WebView();
-    ButtonPlugin menu = new ButtonPlugin();
-    List<ToolBarButton> buttons = menu.buttons;
-    for (ToolBarButton button : buttons) {
+    TextArea textarea = new Editor(webview);
+    var toolBar = new Menu(textarea);
 
-      System.out.println("Button: " + button.getIcon());
-      var iconButton = button.iconButton();
-
-      this.toolbar.getItems().add(iconButton);
-
-      iconButton.setOnMousePressed(event -> {
-        String selectedText = textarea.getSelectedText();
-
-        String changedText = button.changeText(selectedText);
-
-        textarea.replaceSelection(changedText);
-      });
-    }
-    textarea.textProperty().addListener((obs, oldText, newText) -> {
-      MutableDataSet options = new MutableDataSet();
-      options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
-      Parser parser = Parser.builder().build();
-      HtmlRenderer renderer = HtmlRenderer.builder().build();
-      String processedText = newText.replace("\n", "  \n");
-      System.out.println(processedText);
-      Node document = parser.parse(processedText);
-      String html = renderer.render(document);
-      webview.getEngine().loadContent(html);
-    });
     var normalBtn = new Button(null, new FontIcon(Feather.SUN));
+    var dialog = new ThemeSelector().themes();
+    normalBtn.setOnAction((evt -> modalPane.show(dialog)));
+
     HBox menuBar = new HBox();
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
-    menuBar.getChildren().addAll(toolbar, spacer, normalBtn);
-    var dialog = new ThemeSelector().themes();
+    menuBar.getChildren().addAll(toolBar.toolbar, spacer, normalBtn);
 
-    normalBtn.setOnAction((evt -> modalPane.show(dialog)));
     HBox container = new HBox(textarea, webview);
     HBox.setHgrow(textarea, Priority.ALWAYS);
-    HBox.setHgrow(textarea2, Priority.ALWAYS);
-
-    StackPane stack = new StackPane();
 
     VBox root = new VBox();
     root.setPadding(new javafx.geometry.Insets(10));
     root.getChildren().addAll(menuBar, container);
+
+    StackPane stack = new StackPane();
     stack.getChildren().addAll(root, modalPane);
+
+    VBox.setVgrow(container, Priority.ALWAYS);
+    return stack;
+  }
+
+  @Override
+  public void start(Stage stage) throws Exception {
+    Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+
     modalPane.setId("modalPane");
     modalPane.displayProperty().addListener((obs, old, val) -> {
       if (!val) {
@@ -104,14 +80,7 @@ public class MainApp extends Application {
         modalPane.usePredefinedTransitionFactories(null);
       }
     });
-    VBox.setVgrow(container, Priority.ALWAYS);
-    return stack;
-    // :TODO - Add WebView and Markdown Parser
-  }
 
-  @Override
-  public void start(Stage stage) throws Exception {
-    Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
     stage.setScene(new Scene(createContent(), 600, 400));
     stage.setMaximized(true);
     stage.show();
