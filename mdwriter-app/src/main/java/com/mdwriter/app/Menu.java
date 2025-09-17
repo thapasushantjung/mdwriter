@@ -43,18 +43,8 @@ public class Menu {
     themeChanger.getStyleClass().add(Styles.FLAT);
     var dialog = new ThemeSelector().themes();
     themeChanger.setOnAction((evt -> modalPane.show(dialog)));
+    var left_dialog = new Sidebar();
 
-    var left_dialog = new Dialog(250, -1);
-    var root = new FolderTree().scan(new File(System.getProperty("user.home")), 3);
-    var tree = new TreeView<>(root);
-    tree.getStyleClass().add(Styles.DENSE);
-    tree.setShowRoot(false);
-    VBox sidebar = new VBox(tree);
-    sidebar.prefHeightProperty().bind(left_dialog.heightProperty());
-    VBox.setVgrow(tree, Priority.ALWAYS);
-    left_dialog.setAlignment(Pos.TOP_LEFT);
-
-    left_dialog.getChildren().add(sidebar);
     var folder = new Button(null, new FontIcon(Feather.FOLDER));
     folder.getStyleClass().add(Styles.FLAT);
     folder.setOnAction((event -> {
