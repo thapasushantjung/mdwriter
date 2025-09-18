@@ -27,6 +27,7 @@ public class FolderContextMenu extends ContextMenu {
 
     }));
     rename.setOnAction((event -> {
+      tree.rename();
 
     }));
 

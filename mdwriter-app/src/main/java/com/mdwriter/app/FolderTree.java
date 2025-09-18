@@ -256,4 +256,20 @@ public class FolderTree {
       treeView.edit(newItem);
     });
   }
+
+  public void rename() {
+    TreeItem<FileItem> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    if (selectedItem == null) {
+      return; // Nothing selected
+    }
+
+    // Optional: Prevent renaming the root node
+    if (selectedItem.getParent() == null) {
+      System.out.println("Cannot rename the root directory.");
+      return;
+    }
+
+    // Trigger the built-in edit mechanism
+    treeView.edit(selectedItem);
+  }
 }
