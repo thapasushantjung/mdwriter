@@ -9,12 +9,25 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 
 public class FolderContextMenu extends ContextMenu {
-  public FolderContextMenu() {
+  public FolderContextMenu(FolderTree tree) {
 
     var newFile = createItem("_New File", Feather.FILE_PLUS);
     var newFolder = createItem("_New Folder", Feather.FOLDER_PLUS);
     var delete = createItem("_Delete", Feather.TRASH_2);
     var rename = createItem("_Rename", Feather.EDIT_2);
+
+    newFile.setOnAction((event -> {
+      tree.createNewFile();
+    }));
+    newFolder.setOnAction((event -> {
+
+    }));
+    delete.setOnAction((event -> {
+
+    }));
+    rename.setOnAction((event -> {
+
+    }));
 
     getItems().addAll(
         newFile, newFolder, delete, rename);
