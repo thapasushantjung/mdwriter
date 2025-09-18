@@ -20,6 +20,7 @@ public class FolderContextMenu extends ContextMenu {
       tree.createNewFile();
     }));
     newFolder.setOnAction((event -> {
+      tree.createNewFolder();
 
     }));
     delete.setOnAction((event -> {

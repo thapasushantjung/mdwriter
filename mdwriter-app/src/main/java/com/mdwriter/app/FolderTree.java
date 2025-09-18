@@ -166,29 +166,7 @@ public class FolderTree {
 
     // CellFactory remains mostly the same
     treeView.setCellFactory(tv -> {
-      TextFieldTreeCell<FileItem> cell = new TextFieldTreeCell<>() {
-        @Override
-        public void updateItem(FileItem item, boolean empty) {
-          super.updateItem(item, empty); // Essential call
-
-          if (empty || item == null) {
-            setText(null);
-            setGraphic(null);
-          } else {
-            // Set the text to the item's name
-            setText(item.getName());
-
-            // Set a graphic (icon) based on the isDirectory property
-            FontIcon icon;
-            if (item.isDirectory()) {
-              icon = new FontIcon(Feather.FOLDER); // 📁 Folder Icon
-            } else {
-              icon = new FontIcon(Feather.FILE_TEXT); // 📄 File Icon
-            }
-            setGraphic(icon);
-          }
-        }
-      };
+      TextFieldTreeCell<FileItem> cell = new TextFieldTreeCell<>();
 
       cell.setConverter(new StringConverter<>() {
         @Override
@@ -247,4 +225,35 @@ public class FolderTree {
   }
 
   // createNewFolder would be very similar
+  public void createNewFolder() {
+    TreeItem<FileItem> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    if (selectedItem == null)
+      return; // Nothing selected
+
+    // Determine the parent directory for the new file
+    TreeItem<FileItem> parentDir = selectedItem.getValue().isDirectory()
+        ? selectedItem
+        : selectedItem.getParent();
+
+    // Ensure the parent's children are loaded before adding a new one
+    if (parentDir.getChildren().contains(DUMMY_NODE)) {
+      // If not loaded, expand it to trigger loading, then try again.
+      // This is a complex scenario, for simplicity we'll just add it.
+      // A more robust solution would wait for the load to complete.
+      parentDir.getChildren().remove(DUMMY_NODE);
+    }
+
+    FileItem tempItem = new FileItem("NewFolder", parentDir.getValue().getLocation(), true);
+    tempItem.setIsNewFolderCreated(true); // Mark as new
+    TreeItem<FileItem> newItem = new TreeItem<>(tempItem);
+
+    parentDir.getChildren().add(newItem);
+    parentDir.setExpanded(true);
+
+    // Defer selection and editing to ensure UI is ready
+    javafx.application.Platform.runLater(() -> {
+      treeView.getSelectionModel().select(newItem);
+      treeView.edit(newItem);
+    });
+  }
 }

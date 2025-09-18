@@ -9,9 +9,11 @@ import com.mdwriter.app.FolderTree.FileItem;
 
 import atlantafx.base.theme.Styles;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -47,6 +49,23 @@ public class Sidebar extends Dialog {
         try {
           if (file.createNewFile()) {
             FileItem finalItem = new FileItem(file.getName(), file.getPath(), false);
+            editedItem.setValue(finalItem);
+          } else {
+            // Handle error: file already exists
+            editedItem.getParent().getChildren().remove(editedItem);
+          }
+        } catch (Exception e) {
+          // Handle I/O error
+          editedItem.getParent().getChildren().remove(editedItem);
+        }
+
+      } else if (updatedFileItem.isNewFolderCreated()) {
+        // Logic to create a new file on disk
+        File parentDir = new File(editedItem.getParent().getValue().getLocation());
+        File file = new File(parentDir, updatedFileItem.getName());
+        try {
+          if (file.mkdir()) {
+            FileItem finalItem = new FileItem(file.getName(), file.getPath(), true);
             editedItem.setValue(finalItem);
           } else {
             // Handle error: file already exists
