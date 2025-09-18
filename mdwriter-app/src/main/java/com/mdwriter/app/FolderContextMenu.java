@@ -24,6 +24,7 @@ public class FolderContextMenu extends ContextMenu {
 
     }));
     delete.setOnAction((event -> {
+      tree.delete();
 
     }));
     rename.setOnAction((event -> {

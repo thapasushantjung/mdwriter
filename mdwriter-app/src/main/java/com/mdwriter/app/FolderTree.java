@@ -2,11 +2,14 @@ package com.mdwriter.app;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.Optional;
 
-import org.kordamp.ikonli.feather.Feather;
-import org.kordamp.ikonli.javafx.FontIcon;
+import org.apache.commons.io.FileUtils;
 
 import javafx.concurrent.Task;
+import javafx.scene.Cursor;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -271,5 +274,58 @@ public class FolderTree {
 
     // Trigger the built-in edit mechanism
     treeView.edit(selectedItem);
+  }
+
+  public void delete() {
+    TreeItem<FileItem> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    if (selectedItem == null || selectedItem.getParent() == null) {
+      return; // Nothing selected or root is selected
+    }
+
+    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+    confirmation.setTitle("Delete Item");
+    confirmation.setHeaderText("Delete '" + selectedItem.getValue().getName() + "'?");
+    confirmation.setContentText("This action is permanent and cannot be undone.");
+
+    Optional<ButtonType> result = confirmation.showAndWait();
+
+    if (result.isPresent() && result.get() == ButtonType.OK) {
+      // Create a Task for the background deletion process
+      Task<Void> deleteTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+          // This is the long-running code that runs on a background thread
+          File fileToDelete = new File(selectedItem.getValue().getLocation());
+          FileUtils.forceDelete(fileToDelete);
+          return null; // Return null because we don't need a result value
+        }
+      };
+
+      // What to do when the task SUCCEEDS (runs on the UI thread)
+      deleteTask.setOnSucceeded(event -> {
+        // Remove the item from the TreeView
+        selectedItem.getParent().getChildren().remove(selectedItem);
+        // Restore the normal cursor
+        treeView.getScene().setCursor(Cursor.DEFAULT);
+      });
+
+      // What to do when the task FAILS (runs on the UI thread)
+      deleteTask.setOnFailed(event -> {
+        Throwable e = deleteTask.getException(); // Get the exception from the task
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setTitle("Error");
+        error.setHeaderText("Failed to delete '" + selectedItem.getValue().getName() + "'");
+        error.setContentText("Please check file permissions and try again.\n" + e.getMessage());
+        error.showAndWait();
+        // Restore the normal cursor
+        treeView.getScene().setCursor(Cursor.DEFAULT);
+      });
+
+      // Give immediate visual feedback to the user
+      treeView.getScene().setCursor(Cursor.WAIT);
+
+      // Start the task on a new thread
+      new Thread(deleteTask).start();
+    }
   }
 }
