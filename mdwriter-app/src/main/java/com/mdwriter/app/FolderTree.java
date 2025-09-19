@@ -205,7 +205,7 @@ public class FolderTree {
         ? selectedItem
         : selectedItem.getParent();
 
-    // Ensure the parent's children are loaded before adding a new one
+    // TODO: Ensure the parent's children are loaded before adding a new one
     if (parentDir.getChildren().contains(DUMMY_NODE)) {
       // If not loaded, expand it to trigger loading, then try again.
       // This is a complex scenario, for simplicity we'll just add it.

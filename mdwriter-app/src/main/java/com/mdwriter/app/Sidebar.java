@@ -3,6 +3,8 @@ package com.mdwriter.app;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.io.FileUtils;
 
@@ -12,6 +14,9 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import com.mdwriter.app.FolderTree.FileItem;
 
 import atlantafx.base.theme.Styles;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -19,8 +24,12 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class Sidebar extends Dialog {
+  private File file;
+  private Timeline autoSaveTimeline;
+
   public Sidebar(TextArea textarea) {
     super(250, -1);
     // ... (Toolbar button setup remains the same)
@@ -53,6 +62,8 @@ public class Sidebar extends Dialog {
           if (file.createNewFile()) {
             FileItem finalItem = new FileItem(file.getName(), file.getPath(), false);
             editedItem.setValue(finalItem);
+            tree.getSelectionModel().clearSelection();
+            tree.getSelectionModel().select(editedItem);
           } else {
             // Handle error: file already exists
             editedItem.getParent().getChildren().remove(editedItem);
@@ -70,6 +81,8 @@ public class Sidebar extends Dialog {
           if (file.mkdir()) {
             FileItem finalItem = new FileItem(file.getName(), file.getPath(), true);
             editedItem.setValue(finalItem);
+            tree.getSelectionModel().clearSelection();
+            tree.getSelectionModel().select(editedItem);
           } else {
             // Handle error: file already exists
             editedItem.getParent().getChildren().remove(editedItem);
@@ -87,6 +100,7 @@ public class Sidebar extends Dialog {
           // Update the item in the tree with the new path
           FileItem finalItem = new FileItem(file.getName(), file.getPath(), file.isDirectory());
           editedItem.setValue(finalItem);
+          tree.refresh();
         } else {
           // Handle rename failure, revert to old name
           editedItem.setValue(oldFileItem);
@@ -96,6 +110,25 @@ public class Sidebar extends Dialog {
     // Add this inside the start() method from the example above
     var folderContextMenu = new FolderContextMenu(folder);
     tree.setContextMenu(folderContextMenu);
+    autoSaveTimeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
+      if (this.file != null) {
+        try {
+          // Get content from TextArea and write to the file
+          String content = textarea.getText();
+          FileUtils.writeStringToFile(this.file, content, StandardCharsets.UTF_8);
+
+          // Update status label to give user feedback
+          String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+          System.out.println("File auto-saved at " + time);
+
+        } catch (IOException e) {
+          e.printStackTrace();
+          // Stop the timeline if saving fails to prevent repeated errors
+          autoSaveTimeline.stop();
+        }
+      }
+    }));
+    autoSaveTimeline.setCycleCount(Animation.INDEFINITE);
 
     tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue == null) {
@@ -106,18 +139,20 @@ public class Sidebar extends Dialog {
       File file = new File(selectedItem.getLocation());
 
       if (!file.isDirectory() && file != null) {
+        this.file = file;
 
         try {
 
           String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
           textarea.setText(content);
+          autoSaveTimeline.playFromStart();
+
         } catch (IOException e) {
           e.printStackTrace();
-
         }
       }
-
     });
+
     tree.getStyleClass().add(Styles.DENSE);
     tree.setShowRoot(false);
     VBox sidebar = new VBox(sideToolBar, tree);

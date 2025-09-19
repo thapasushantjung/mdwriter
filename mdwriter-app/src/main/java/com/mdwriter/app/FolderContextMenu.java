@@ -4,7 +4,6 @@ import org.jetbrains.annotations.Nullable;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
-
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 
