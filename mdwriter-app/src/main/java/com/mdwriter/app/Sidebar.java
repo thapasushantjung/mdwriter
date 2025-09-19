@@ -1,6 +1,10 @@
 package com.mdwriter.app;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.FileUtils;
 
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -9,16 +13,15 @@ import com.mdwriter.app.FolderTree.FileItem;
 
 import atlantafx.base.theme.Styles;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class Sidebar extends Dialog {
-  public Sidebar() {
+  public Sidebar(TextArea textarea) {
     super(250, -1);
     // ... (Toolbar button setup remains the same)
     var newFile = new Button(null, new FontIcon(Feather.FILE_PLUS));
@@ -95,10 +98,25 @@ public class Sidebar extends Dialog {
     tree.setContextMenu(folderContextMenu);
 
     tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue != null) {
-        // newValue is the selected TreeItem<String>
-        System.out.println("Selected Item: " + newValue.getValue());
+      if (newValue == null) {
+        return;
       }
+
+      FileItem selectedItem = newValue.getValue();
+      File file = new File(selectedItem.getLocation());
+
+      if (!file.isDirectory() && file != null) {
+
+        try {
+
+          String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+          textarea.setText(content);
+        } catch (IOException e) {
+          e.printStackTrace();
+
+        }
+      }
+
     });
     tree.getStyleClass().add(Styles.DENSE);
     tree.setShowRoot(false);
