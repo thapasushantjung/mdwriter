@@ -72,7 +72,17 @@ public class Menu {
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-    this.toolbar.getItems().addAll(spacer, themeChanger);
+    // Proposal Template Button
+    var proposalTemplate = new Button("Proposal Template", new FontIcon(Feather.FILE_TEXT));
+    proposalTemplate.getStyleClass().addAll(Styles.FLAT, Styles.ACCENT);
+    proposalTemplate.setOnAction((evt -> {
+        // Enable proposal mode and load template
+        if (textarea instanceof Editor) {
+            ((Editor) textarea).enableProposalMode();
+        }
+    }));
+
+    this.toolbar.getItems().addAll(spacer, proposalTemplate, themeChanger);
 
   }
 

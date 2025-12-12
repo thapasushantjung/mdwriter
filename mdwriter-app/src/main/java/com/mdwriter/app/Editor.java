@@ -18,46 +18,125 @@ import java.util.Map;
 
 public class Editor extends TextArea {
 
+    // Flag to determine rendering mode
+    private boolean proposalMode = false;
+    private WebView webview;
+
     public Editor(WebView webview) {
-        setText(getDefaultTemplate());
+        this.webview = webview;
+        // Start with empty editor - template is loaded via button click
+        setText("");
         
         textProperty().addListener((obs, oldText, newText) -> {
-            MutableDataSet options = new MutableDataSet();
-            options.set(Parser.EXTENSIONS, Arrays.asList(
-                YamlFrontMatterExtension.create(),
-                TocExtension.create(),
-                TablesExtension.create(),
-                AbbreviationExtension.create()
-            ));
-            options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
-            options.set(HtmlRenderer.GENERATE_HEADER_ID, true);
-            // Set custom TOC class to ensure robust regex matching
-            options.set(TocExtension.DIV_CLASS, "pro-toc");
-            // Include H1-H3 levels in TOC
-            options.set(TocExtension.LEVELS, 7); // Binary: 0b0000111 = 7 means levels 1, 2, 3
-            
-            Parser parser = Parser.builder(options).build();
-            HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-            
-            String processedText = newText.replace("\n", "  \n");
-            
-            // Explicitly wrap [TOC] to ensure we can extract it reliably
-            // We use comments to avoid nesting issues with divs
-            if (processedText.contains("[TOC]")) {
-                processedText = processedText.replace("[TOC]", "\n<!-- TOC_START -->\n[TOC]\n<!-- TOC_END -->\n");
+            if (proposalMode) {
+                renderProposalMode(newText);
+            } else {
+                renderNormalMode(newText);
             }
-            
-            Node document = parser.parse(processedText);
-            
-            AbstractYamlFrontMatterVisitor visitor = new AbstractYamlFrontMatterVisitor();
-            visitor.visit(document);
-            Map<String, List<String>> metadata = visitor.getData();
-            
-            String htmlContent = renderer.render(document);
-            String fullHtml = buildFullHtml(metadata, htmlContent);
-            
-            webview.getEngine().loadContent(fullHtml);
         });
+    }
+    
+    /**
+     * Enable proposal mode with template
+     */
+    public void enableProposalMode() {
+        this.proposalMode = true;
+        setText(getDefaultTemplate());
+    }
+    
+    /**
+     * Disable proposal mode, return to normal markdown
+     */
+    public void disableProposalMode() {
+        this.proposalMode = false;
+        // Re-render current content in normal mode
+        String currentText = getText();
+        renderNormalMode(currentText);
+    }
+    
+    /**
+     * Normal markdown rendering - simple HTML without proposal formatting
+     */
+    private void renderNormalMode(String newText) {
+        MutableDataSet options = new MutableDataSet();
+        options.set(Parser.EXTENSIONS, Arrays.asList(
+            TablesExtension.create(),
+            AbbreviationExtension.create()
+        ));
+        options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+        options.set(HtmlRenderer.GENERATE_HEADER_ID, true);
+        
+        Parser parser = Parser.builder(options).build();
+        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+        
+        Node document = parser.parse(newText);
+        String htmlContent = renderer.render(document);
+        
+        // Simple CSS for normal mode
+        String css = """
+            <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    line-height: 1.6;
+                    padding: 20px;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    color: #333;
+                }
+                h1, h2, h3 { color: #2c3e50; }
+                code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+                pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+                blockquote { border-left: 4px solid #ddd; margin: 0; padding-left: 16px; color: #666; }
+                table { border-collapse: collapse; width: 100%; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background: #f4f4f4; }
+                img { max-width: 100%; height: auto; }
+            </style>
+        """;
+        
+        String fullHtml = "<html><head>" + css + "</head><body>" + htmlContent + "</body></html>";
+        webview.getEngine().loadContent(fullHtml);
+    }
+    
+    /**
+     * Proposal mode rendering - full proposal formatting with pages, TOC, JS
+     */
+    private void renderProposalMode(String newText) {
+        MutableDataSet options = new MutableDataSet();
+        options.set(Parser.EXTENSIONS, Arrays.asList(
+            YamlFrontMatterExtension.create(),
+            TocExtension.create(),
+            TablesExtension.create(),
+            AbbreviationExtension.create()
+        ));
+        options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+        options.set(HtmlRenderer.GENERATE_HEADER_ID, true);
+        // Set custom TOC class to ensure robust regex matching
+        options.set(TocExtension.DIV_CLASS, "pro-toc");
+        // Include H1-H3 levels in TOC
+        options.set(TocExtension.LEVELS, 7); // Binary: 0b0000111 = 7 means levels 1, 2, 3
+        
+        Parser parser = Parser.builder(options).build();
+        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+        
+        String processedText = newText.replace("\n", "  \n");
+        
+        // Explicitly wrap [TOC] to ensure we can extract it reliably
+        // We use comments to avoid nesting issues with divs
+        if (processedText.contains("[TOC]")) {
+            processedText = processedText.replace("[TOC]", "\n<!-- TOC_START -->\n[TOC]\n<!-- TOC_END -->\n");
+        }
+        
+        Node document = parser.parse(processedText);
+        
+        AbstractYamlFrontMatterVisitor visitor = new AbstractYamlFrontMatterVisitor();
+        visitor.visit(document);
+        Map<String, List<String>> metadata = visitor.getData();
+        
+        String htmlContent = renderer.render(document);
+        String fullHtml = buildFullHtml(metadata, htmlContent);
+        
+        webview.getEngine().loadContent(fullHtml);
     }
 
     private String buildFullHtml(Map<String, List<String>> metadata, String content) {
@@ -718,7 +797,7 @@ public class Editor extends TextArea {
         return defaultValue;
     }
 
-    private String getDefaultTemplate() {
+    public static String getDefaultTemplate() {
         return """
 ---
 title: Blood Bank Management System
