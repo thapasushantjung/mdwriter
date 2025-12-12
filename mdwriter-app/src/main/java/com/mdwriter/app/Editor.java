@@ -13,6 +13,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.web.WebView;
 
 import java.util.Arrays;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +22,15 @@ public class Editor extends TextArea {
     // Flag to determine rendering mode
     private boolean proposalMode = false;
     private WebView webview;
+    private File rootDirectory;
 
-    public Editor(WebView webview) {
+    public Editor(WebView webview, File rootDirectory) {
         this.webview = webview;
+        this.rootDirectory = rootDirectory;
         // Start with empty editor - template is loaded via button click
         setText("");
+        getStyleClass().add("editor");
+        setWrapText(true);
         
         textProperty().addListener((obs, oldText, newText) -> {
             if (proposalMode) {

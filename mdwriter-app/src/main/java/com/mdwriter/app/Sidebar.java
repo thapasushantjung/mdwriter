@@ -30,7 +30,7 @@ public class Sidebar extends Dialog {
   private File file;
   private Timeline autoSaveTimeline;
 
-  public Sidebar(TextArea textarea) {
+  public Sidebar(TextArea textarea, File rootDirectory) {
     super(250, -1);
     // ... (Toolbar button setup remains the same)
     var newFile = new Button(null, new FontIcon(Feather.FILE_PLUS));
@@ -46,7 +46,14 @@ public class Sidebar extends Dialog {
     var folder = new FolderTree();
 
     // THIS CALL IS NOW NON-BLOCKING AND RETURNS INSTANTLY 🚀
-    var tree = folder.getFolder(new File(System.getProperty("user.home")));
+    // IMPORTANT: getFolder() initializes the internal treeView, must be called first
+    var tree = folder.getFolder(rootDirectory);
+
+    // Wire up buttons AFTER tree is initialized
+    newFile.setOnAction(e -> folder.createNewFile());
+    newFolder.setOnAction(e -> folder.createNewFolder());
+    delete.setOnAction(e -> folder.delete());
+    rename.setOnAction(e -> folder.rename());
 
     // The onEditCommit logic needs to be updated to handle renaming properly
     tree.setOnEditCommit(event -> {

@@ -24,7 +24,7 @@ public class Menu {
 
   public ModalPane modalPane = new ModalPane();
 
-  public Menu(TextArea textarea) {
+  public Menu(TextArea textarea, java.io.File rootDirectory) {
 
     modalPane.setId("modalPane");
     modalPane.displayProperty().addListener((obs, old, val) -> {
@@ -40,7 +40,7 @@ public class Menu {
     themeChanger.getStyleClass().add(Styles.FLAT);
     var dialog = new ThemeSelector().themes();
     themeChanger.setOnAction((evt -> modalPane.show(dialog)));
-    var left_dialog = new Sidebar(textarea);
+    var left_dialog = new Sidebar(textarea, rootDirectory);
 
     var folder = new Button(null, new FontIcon(Feather.FOLDER));
     folder.getStyleClass().add(Styles.FLAT);

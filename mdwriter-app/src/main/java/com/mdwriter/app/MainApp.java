@@ -24,11 +24,11 @@ public class MainApp extends Application {
 
   private ModalPane modalPane;
 
-  private Parent createContent() throws Exception {
+  private Parent createContent(java.io.File rootDirectory) throws Exception {
 
     WebView webview = new WebView();
-    TextArea textarea = new Editor(webview);
-    var toolBar = new Menu(textarea);
+    TextArea textarea = new Editor(webview, rootDirectory);
+    var toolBar = new Menu(textarea, rootDirectory);
     modalPane = toolBar.modalPane;
 
     HBox container = new HBox(textarea, webview);
@@ -50,7 +50,24 @@ public class MainApp extends Application {
   public void start(Stage stage) throws Exception {
     Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
-    stage.setScene(new Scene(createContent(), 600, 400));
+    javafx.stage.DirectoryChooser directoryChooser = new javafx.stage.DirectoryChooser();
+    directoryChooser.setTitle("Authorize Workspace Folder");
+    java.io.File initialDirectory = new java.io.File(System.getProperty("user.home"));
+    if (initialDirectory.exists()) {
+        directoryChooser.setInitialDirectory(initialDirectory);
+    }
+    
+    java.io.File selectedDirectory = directoryChooser.showDialog(stage);
+    
+    if (selectedDirectory == null) {
+        // User cancelled, maybe exit or default to home?
+        // Let's default to user home for now if they cancel, or exit.
+        // Better to just exit if authorization is mandatory.
+        System.exit(0);
+        return; 
+    }
+
+    stage.setScene(new Scene(createContent(selectedDirectory), 600, 400));
     stage.setMaximized(true);
     stage.show();
 
