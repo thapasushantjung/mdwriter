@@ -58,44 +58,9 @@ public class Editor extends TextArea {
      * Normal markdown rendering - simple HTML without proposal formatting
      */
     private void renderNormalMode(String newText) {
-        MutableDataSet options = new MutableDataSet();
-        options.set(Parser.EXTENSIONS, Arrays.asList(
-            TablesExtension.create(),
-            AbbreviationExtension.create()
-        ));
-        options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
-        options.set(HtmlRenderer.GENERATE_HEADER_ID, true);
-        
-        Parser parser = Parser.builder(options).build();
-        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-        
-        Node document = parser.parse(newText);
-        String htmlContent = renderer.render(document);
-        
-        // Simple CSS for normal mode
-        String css = """
-            <style>
-                body {
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    line-height: 1.6;
-                    padding: 20px;
-                    max-width: 800px;
-                    margin: 0 auto;
-                    color: #333;
-                }
-                h1, h2, h3 { color: #2c3e50; }
-                code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
-                pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
-                blockquote { border-left: 4px solid #ddd; margin: 0; padding-left: 16px; color: #666; }
-                table { border-collapse: collapse; width: 100%; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                th { background: #f4f4f4; }
-                img { max-width: 100%; height: auto; }
-            </style>
-        """;
-        
-        String fullHtml = "<html><head>" + css + "</head><body>" + htmlContent + "</body></html>";
-        webview.getEngine().loadContent(fullHtml);
+        NormalMarkdownRenderer renderer = new NormalMarkdownRenderer();
+        String html = renderer.render(newText);
+        webview.getEngine().loadContent(html);
     }
     
     /**
@@ -164,7 +129,37 @@ public class Editor extends TextArea {
         // CSS
         String css = """
             <style>
-                @import url('https://fonts.googleapis.com/css2?family=Times+New_Roman&display=swap');
+                /* Times New Roman - Regular */
+                @font-face {
+                    font-family: 'Times New Roman';
+                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman.ttf') format('truetype');
+                    font-weight: normal;
+                    font-style: normal;
+                }
+                
+                /* Times New Roman - Bold */
+                @font-face {
+                    font-family: 'Times New Roman';
+                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman Bold.ttf') format('truetype');
+                    font-weight: bold;
+                    font-style: normal;
+                }
+                
+                /* Times New Roman - Italic */
+                @font-face {
+                    font-family: 'Times New Roman';
+                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman Italic.ttf') format('truetype');
+                    font-weight: normal;
+                    font-style: italic;
+                }
+                
+                /* Times New Roman - Bold Italic */
+                @font-face {
+                    font-family: 'Times New Roman';
+                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman Bold Italic.ttf') format('truetype');
+                    font-weight: bold;
+                    font-style: italic;
+                }
                 body {
                     font-family: 'Times New Roman', serif;
                     line-height: 1.5;
