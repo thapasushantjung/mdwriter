@@ -54,9 +54,10 @@ public class Editor extends TextArea {
         renderNormalMode(currentText);
     }
     
-    /**
-     * Normal markdown rendering - simple HTML without proposal formatting
-     */
+    public WebView getWebView() {
+        return webview;
+    }
+
     private void renderNormalMode(String newText) {
         NormalMarkdownRenderer renderer = new NormalMarkdownRenderer();
         String html = renderer.render(newText);
@@ -67,6 +68,7 @@ public class Editor extends TextArea {
      * Proposal mode rendering - full proposal formatting with pages, TOC, JS
      */
     private void renderProposalMode(String newText) {
+        // ... (existing code for renderProposalMode start) ...
         MutableDataSet options = new MutableDataSet();
         options.set(Parser.EXTENSIONS, Arrays.asList(
             YamlFrontMatterExtension.create(),
@@ -105,6 +107,7 @@ public class Editor extends TextArea {
     }
 
     private String buildFullHtml(Map<String, List<String>> metadata, String content) {
+        // ... (metadata getters) ...
         String title = getMeta(metadata, "title", "Project Title");
         String subject = getMeta(metadata, "subject", "Project Subject");
         String code = getMeta(metadata, "code", "Subject Code");
@@ -167,6 +170,7 @@ public class Editor extends TextArea {
                     padding: 20px;
                     background: #f0f0f0;
                 }
+
                 .page {
                     background: white;
                     width: 21cm;
@@ -179,9 +183,11 @@ public class Editor extends TextArea {
                     position: relative;
                     word-wrap: break-word;
                     overflow-wrap: break-word;
+                    display: flex;
+                    flex-direction: column;
                 }
                 .main-content {
-                    /* No overflow hidden - let JS handle pagination */
+                    flex: 1 1 auto;
                 }
                 .center { text-align: center; }
                 .bold { font-weight: bold; }
@@ -190,13 +196,13 @@ public class Editor extends TextArea {
                 .logo {
                     width: 150px;
                     height: auto;
-                    margin: 20px 0;
+                    margin: 5px 0;
                 }
                 
-                .title-section { margin-top: 20px; margin-bottom: 40px; }
-                .submission-section { margin-bottom: 30px; }
-                .submitted-by { margin-top: 40px; margin-bottom: 40px; }
-                .college-section { margin-top: auto; position: absolute; bottom: 1in; left: 0; right: 0; text-align: center;}
+                .title-section { margin-top: 10px; margin-bottom: 10px; }
+                .submission-section { margin-bottom: 20px; }
+                .submitted-by { margin-top: 20px; margin-bottom: 20px; }
+                .college-section { margin-top: auto; text-align: center; margin-bottom: 10px; }
                 
                 .footer-number {
                     position: absolute;
@@ -210,11 +216,7 @@ public class Editor extends TextArea {
                 h2 { font-size: 14pt; margin: 10px 0; }
                 h3 { font-size: 13pt; margin: 5px 0; }
                 p { font-size: 12pt; margin: 5px 0; }
-                
-                @media print {
-                    body { background: white; }
-                    .page { margin: 0; box-shadow: none; width: 100%; height: 100%; }
-                }
+
                 
                 /* TOC Styles */
                 .toc-entry { display: flex; align-items: flex-end; margin-bottom: 5px; }
@@ -241,6 +243,41 @@ public class Editor extends TextArea {
                 .toc-link .toc-text { flex: 0 0 auto; }
                 .toc-link .toc-dots { flex: 1 1 auto; border-bottom: 1px dotted #000; margin: 0 5px; position: relative; top: -4px; }
                 .toc-link .toc-page { flex: 0 0 auto; }
+                
+                @media print {
+                    * {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+                    html, body {
+                        background: none !important;
+                        -webkit-print-color-adjust: exact;
+                    }
+                    .page {
+                        padding: 1cm !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                        width: 100% !important;
+                        min-height: auto !important;
+                        page-break-after: always;
+                        page-break-inside: avoid !important;
+                        position: relative !important;
+                    }
+                    .page:last-child {
+                        page-break-after: auto !important;
+                    }
+                    .footer-number {
+                        position: absolute !important;
+                        bottom: 0.5cm !important;
+                        left: 0 !important;
+                        width: 100% !important;
+                        text-align: center !important;
+                    }
+                    @page {
+                        margin: 0;
+                        size: A4;
+                    }
+                }
             </style>
         """;
 

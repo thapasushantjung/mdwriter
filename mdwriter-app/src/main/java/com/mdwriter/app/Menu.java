@@ -82,7 +82,21 @@ public class Menu {
         }
     }));
 
-    this.toolbar.getItems().addAll(spacer, proposalTemplate, themeChanger);
+    // Print Button
+    var printButton = new Button("Print / PDF", new FontIcon(Feather.PRINTER));
+    printButton.getStyleClass().addAll(Styles.FLAT, Styles.ACCENT);
+    printButton.setOnAction((evt -> {
+        if (textarea instanceof Editor) {
+            javafx.scene.web.WebView webView = ((Editor) textarea).getWebView();
+            javafx.print.PrinterJob job = javafx.print.PrinterJob.createPrinterJob();
+            if (job != null && job.showPrintDialog(webView.getScene().getWindow())) {
+                webView.getEngine().print(job);
+                job.endJob();
+            }
+        }
+    }));
+
+    this.toolbar.getItems().addAll(spacer, proposalTemplate, printButton, themeChanger);
 
   }
 
