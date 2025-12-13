@@ -123,6 +123,13 @@ public class Editor extends TextArea {
         String address = "Putalisadak, Kathmandu";
         String year = getMeta(metadata, "year", "2024");
         String supervisor = getMeta(metadata, "supervisor", "Rubim Shrestha");
+
+        // Load resources
+        String fontRegular = ResourceLoader.getFontUrl("Times New Roman.ttf");
+        String fontBold = ResourceLoader.getFontUrl("Times New Roman Bold.ttf");
+        String fontItalic = ResourceLoader.getFontUrl("Times New Roman Italic.ttf");
+        String fontBoldItalic = ResourceLoader.getFontUrl("Times New Roman Bold Italic.ttf");
+        String logoUrl = ResourceLoader.getImageUrl("Purbanchal_University_Logo.png");
         
         List<String> students = metadata.get("students");
         StringBuilder studentsHtml = new StringBuilder();
@@ -135,12 +142,13 @@ public class Editor extends TextArea {
         }
 
         // CSS
+        // CSS
         String css = """
             <style>
                 /* Times New Roman - Regular */
                 @font-face {
                     font-family: 'Times New Roman';
-                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman.ttf') format('truetype');
+                    src: url('{{FONT_REGULAR}}') format('truetype');
                     font-weight: normal;
                     font-style: normal;
                 }
@@ -148,7 +156,7 @@ public class Editor extends TextArea {
                 /* Times New Roman - Bold */
                 @font-face {
                     font-family: 'Times New Roman';
-                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman Bold.ttf') format('truetype');
+                    src: url('{{FONT_BOLD}}') format('truetype');
                     font-weight: bold;
                     font-style: normal;
                 }
@@ -156,7 +164,7 @@ public class Editor extends TextArea {
                 /* Times New Roman - Italic */
                 @font-face {
                     font-family: 'Times New Roman';
-                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman Italic.ttf') format('truetype');
+                    src: url('{{FONT_ITALIC}}') format('truetype');
                     font-weight: normal;
                     font-style: italic;
                 }
@@ -164,7 +172,7 @@ public class Editor extends TextArea {
                 /* Times New Roman - Bold Italic */
                 @font-face {
                     font-family: 'Times New Roman';
-                    src: url('file:///home/hancy/mdwriter/mdwriter-app/src/main/resources/fonts/Times New Roman Bold Italic.ttf') format('truetype');
+                    src: url('{{FONT_BOLD_ITALIC}}') format('truetype');
                     font-weight: bold;
                     font-style: italic;
                 }
@@ -284,8 +292,11 @@ public class Editor extends TextArea {
                     }
                 }
             </style>
-        """;
-
+        """
+        .replace("{{FONT_REGULAR}}", fontRegular != null ? fontRegular : "")
+        .replace("{{FONT_BOLD}}", fontBold != null ? fontBold : "")
+        .replace("{{FONT_ITALIC}}", fontItalic != null ? fontItalic : "")
+        .replace("{{FONT_BOLD_ITALIC}}", fontBoldItalic != null ? fontBoldItalic : "");
         // Page 1: Title Page with Logo
         String page1 = String.format("""
             <div class="page center" id="page-title">
@@ -303,7 +314,7 @@ public class Editor extends TextArea {
                 
                 <div class="submission-to">
                     <p class="bold">Submitted to</p>
-                    <img src="file:///home/hancy/mdwriter/Purbanchal_University_Logo.png" class="logo" alt="University Logo"/>
+                    <img src="%s" class="logo" alt="University Logo"/>
                     <p>%s</p>
                     <p>Biratnagar, Nepal</p>
                 </div>
@@ -320,7 +331,7 @@ public class Editor extends TextArea {
                     <p>%s</p>
                 </div>
             </div>
-            """, title, subject, code, program, semester, university, studentsHtml.toString(), college, address, year);
+            """, title, subject, code, program, semester, logoUrl, university, studentsHtml.toString(), college, address, year);
 
         // Page 2: Supervisor / Approval Page (Detailed)
         String page2 = String.format("""
