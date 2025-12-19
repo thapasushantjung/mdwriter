@@ -79,7 +79,7 @@ public class Menu {
         // Enable proposal mode and load template
         if (textarea instanceof Editor) {
             Editor editor = (Editor) textarea;
-            String templateContent = Editor.getDefaultTemplate();
+            String templateContent = ProposalTemplate.getDefaultTemplate();
             
             // Create proposal file in root directory
             java.io.File proposalFile = new java.io.File(rootDirectory, "proposal.md");
