@@ -11,6 +11,9 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import javafx.scene.control.TextArea;
 import javafx.scene.web.WebView;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.concurrent.Worker;
 
 import java.util.Arrays;
 import java.io.File;
@@ -23,6 +26,7 @@ public class Editor extends TextArea {
     private boolean proposalMode = false;
     private WebView webview;
     private File rootDirectory;
+    private final IntegerProperty wordCount = new SimpleIntegerProperty(0);
 
     public Editor(WebView webview, File rootDirectory) {
         this.webview = webview;
@@ -39,6 +43,40 @@ public class Editor extends TextArea {
                 renderNormalMode(newText);
             }
         });
+        
+        // Listen for WebView load completion to calculate word count
+        webview.getEngine().getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                calculateWordCount();
+            }
+        });
+    }
+    
+    public IntegerProperty wordCountProperty() {
+        return wordCount;
+    }
+
+    public int getWordCount() {
+        return wordCount.get();
+    }
+
+    private void calculateWordCount() {
+        try {
+            // Execute JS to get innerText of body and count words
+            Object result = webview.getEngine().executeScript(
+                "document.body.innerText.trim().split(/\\s+/).filter(word => word.length > 0).length"
+            );
+            
+            if (result instanceof Integer) {
+                wordCount.set((Integer) result);
+            } else if (result instanceof Number) {
+                wordCount.set(((Number) result).intValue());
+            } else {
+                 wordCount.set(0); 
+            }
+        } catch (Exception e) {
+            // Ignore errors during script execution (e.g. if page not fully loaded)
+        }
     }
     
     /**

@@ -5,7 +5,9 @@ import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -27,7 +29,7 @@ public class MainApp extends Application {
   private Parent createContent(java.io.File rootDirectory) throws Exception {
 
     WebView webview = new WebView();
-    TextArea textarea = new Editor(webview, rootDirectory);
+    Editor textarea = new Editor(webview, rootDirectory);
     var toolBar = new Menu(textarea, rootDirectory);
     modalPane = toolBar.modalPane;
 
@@ -36,7 +38,16 @@ public class MainApp extends Application {
 
     VBox root = new VBox();
     root.setPadding(new javafx.geometry.Insets(10));
-    root.getChildren().addAll(toolBar.toolbar, container);
+    HBox statusBar = new HBox();
+    statusBar.setPadding(new javafx.geometry.Insets(5));
+    statusBar.setAlignment(Pos.CENTER_RIGHT);
+    Label wordCountLabel = new Label("Words: 0");
+    statusBar.getChildren().add(wordCountLabel);
+    
+    // Bind word count label
+    wordCountLabel.textProperty().bind(textarea.wordCountProperty().asString("Words: %d"));
+
+    root.getChildren().addAll(toolBar.toolbar, container, statusBar);
 
     StackPane stack = new StackPane();
     stack.getChildren().addAll(root, modalPane);
