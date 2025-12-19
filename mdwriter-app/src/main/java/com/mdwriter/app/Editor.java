@@ -165,6 +165,8 @@ public class Editor extends TextArea {
         String fontItalic = ResourceLoader.getFontUrl("Times New Roman Italic.ttf");
         String fontBoldItalic = ResourceLoader.getFontUrl("Times New Roman Bold Italic.ttf");
         String logoUrl = ResourceLoader.getImageUrl("Purbanchal_University_Logo.png");
+        String highlightJs = ResourceLoader.load("/highlight.js");
+        String highlightCss = ResourceLoader.load("/highlight.css");
         
         List<String> students = metadata.get("students");
         StringBuilder studentsHtml = new StringBuilder();
@@ -684,6 +686,9 @@ public class Editor extends TextArea {
         String script = """
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
+                    if (typeof hljs !== 'undefined') {
+                        hljs.highlightAll();
+                    }
                     // Delay to ensure DOM is fully rendered in WebView
                     setTimeout(function() {
                         // Constants for A4 page content area
@@ -850,7 +855,7 @@ public class Editor extends TextArea {
             </script>
         """;
 
-        return "<html><head>" + css + "</head><body>" + page1 + page2 + page3 + page4 + page5 + page6 + page7 + page8 + bodyPagesBuilder.toString() + script + "</body></html>";
+        return "<html><head>" + css + "<link rel=\"stylesheet\" href=\"" + highlightCss + "\"></head><body>" + page1 + page2 + page3 + page4 + page5 + page6 + page7 + page8 + bodyPagesBuilder.toString() + "<script src=\"" + highlightJs + "\"></script>" + script + "</body></html>";
     }
 
     // Helper to extract TOC if [TOC] is present or just return empty

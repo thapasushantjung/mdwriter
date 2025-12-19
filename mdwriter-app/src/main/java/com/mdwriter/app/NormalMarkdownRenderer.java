@@ -34,8 +34,16 @@ public class NormalMarkdownRenderer {
         Node document = parser.parse(markdownText);
         String htmlContent = renderer.render(document);
         
+        String highlightJs = ResourceLoader.load("/highlight.js");
+        String highlightCss = ResourceLoader.load("/highlight.css");
+        
         String css = getCSS();
-        return "<html><head>" + css + "</head><body>" + htmlContent + "</body></html>";
+        return "<html><head>" + css + 
+               "<link rel=\"stylesheet\" href=\"" + highlightCss + "\">" +
+               "</head><body>" + htmlContent + 
+               "<script src=\"" + highlightJs + "\"></script>" +
+               "<script>if (typeof hljs !== 'undefined') { hljs.highlightAll(); }</script>" +
+               "</body></html>";
     }
     
     private String getCSS() {
