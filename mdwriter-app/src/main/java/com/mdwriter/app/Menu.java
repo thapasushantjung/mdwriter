@@ -78,25 +78,109 @@ public class Menu {
     proposalTemplate.setOnAction((evt -> {
         // Enable proposal mode and load template
         if (textarea instanceof Editor) {
-            ((Editor) textarea).enableProposalMode();
-        }
-    }));
+            Editor editor = (Editor) textarea;
+            String templateContent = Editor.getDefaultTemplate();
+            
+            // Create proposal file in root directory
+            java.io.File proposalFile = new java.io.File(rootDirectory, "proposal.md");
+            int counter = 1;
+            // Find unique filename if proposal.md exists
+            while (proposalFile.exists()) {
+                proposalFile = new java.io.File(rootDirectory, "proposal-" + counter + ".md");
+                counter++;
+            }
+            
+            try {
+                // Write template to file
+                java.nio.file.Files.writeString(proposalFile.toPath(), templateContent);
+                
+                // Enable proposal mode and show template
+                editor.enableProposalMode();
+                
+                // Refresh the sidebar to show the new file
+                left_dialog.refresh();
 
-    // Print Button
-    var printButton = new Button("Print / PDF", new FontIcon(Feather.PRINTER));
-    printButton.getStyleClass().addAll(Styles.FLAT, Styles.ACCENT);
-    printButton.setOnAction((evt -> {
-        if (textarea instanceof Editor) {
-            javafx.scene.web.WebView webView = ((Editor) textarea).getWebView();
-            javafx.print.PrinterJob job = javafx.print.PrinterJob.createPrinterJob();
-            if (job != null && job.showPrintDialog(webView.getScene().getWindow())) {
-                webView.getEngine().print(job);
-                job.endJob();
+            } catch (java.io.IOException e) {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Failed to create proposal file");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+                
+                // Still enable proposal mode even if file creation fails
+                editor.enableProposalMode();
             }
         }
     }));
 
+    // Export / Print Button - exports HTML and opens in browser for printing
+    var printButton = new Button("Export / Print", new FontIcon(Feather.PRINTER));
+    printButton.getStyleClass().addAll(Styles.FLAT, Styles.ACCENT);
+    printButton.setOnAction((evt -> {
+        if (textarea instanceof Editor) {
+            javafx.scene.web.WebView webView = ((Editor) textarea).getWebView();
+            if (webView == null) {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Export Error");
+                alert.setHeaderText("Cannot Export");
+                alert.setContentText("WebView is not available. Please load some content first.");
+                alert.showAndWait();
+                return;
+            }
+            
+            // Get HTML content from WebView
+            String htmlContent = (String) webView.getEngine().executeScript("document.documentElement.outerHTML");
+            
+            // Show file save dialog
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Export HTML for Printing");
+            fileChooser.setInitialFileName("proposal.html");
+            fileChooser.getExtensionFilters().add(
+                new javafx.stage.FileChooser.ExtensionFilter("HTML Files", "*.html")
+            );
+            
+            java.io.File file = fileChooser.showSaveDialog(webView.getScene().getWindow());
+            if (file != null) {
+                try {
+                    java.nio.file.Files.writeString(file.toPath(), htmlContent);
+                    
+                    // Open the HTML file in default browser
+                    try {
+                        // Use xdg-open on Linux (more reliable than Desktop.browse)
+                        String os = System.getProperty("os.name").toLowerCase();
+                        if (os.contains("linux")) {
+                            Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
+                        } else if (java.awt.Desktop.isDesktopSupported() && java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
+                            java.awt.Desktop.getDesktop().browse(file.toURI());
+                        }
+                    } catch (Exception ignored) {
+                        // Browser opening is optional, don't fail if it doesn't work
+                    }
+                    
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                    alert.setTitle("Export Successful");
+                    alert.setHeaderText("HTML Exported");
+                    alert.setContentText("File saved and opened in browser.\nUse Ctrl+P in your browser to print or save as PDF.");
+                    alert.showAndWait();
+                } catch (java.io.IOException e) {
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                    alert.setTitle("Export Error");
+                    alert.setHeaderText("Failed to Export");
+                    alert.setContentText("Error: " + e.getMessage());
+                    alert.showAndWait();
+                }
+            }
+        } else {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+            alert.setTitle("Export");
+            alert.setHeaderText("Cannot Export");
+            alert.setContentText("Editor is not available.");
+            alert.showAndWait();
+        }
+    }));
+
     this.toolbar.getItems().addAll(spacer, proposalTemplate, printButton, themeChanger);
+
 
   }
 

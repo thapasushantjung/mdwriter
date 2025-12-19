@@ -1,0 +1,9 @@
+version=0.0.1
+pluginId=bold-button
+pluginClass=org.mdwriter.plugin.BoldButtonPlugin
+pluginProvider=Sushant Thapa
+pluginDependencies=
+systemProp.pluginId=bold-button
+systemProp.pluginClass=org.mdwriter.plugin.BoldButtonPlugin
+systemProp.pluginProvider=Sushant Thapa
+systemProp.pluginDependencies=

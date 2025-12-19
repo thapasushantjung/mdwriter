@@ -29,6 +29,7 @@ import javafx.util.Duration;
 public class Sidebar extends Dialog {
   private File file;
   private Timeline autoSaveTimeline;
+  private FolderTree folderTree;
 
   public Sidebar(TextArea textarea, File rootDirectory) {
     super(250, -1);
@@ -43,17 +44,29 @@ public class Sidebar extends Dialog {
     rename.getStyleClass().add(Styles.FLAT);
     ToolBar sideToolBar = new ToolBar(newFile, newFolder, delete, rename);
 
-    var folder = new FolderTree();
+    this.folderTree = new FolderTree();
 
     // THIS CALL IS NOW NON-BLOCKING AND RETURNS INSTANTLY 🚀
     // IMPORTANT: getFolder() initializes the internal treeView, must be called first
-    var tree = folder.getFolder(rootDirectory);
+    var tree = folderTree.getFolder(rootDirectory);
 
     // Wire up buttons AFTER tree is initialized
-    newFile.setOnAction(e -> folder.createNewFile());
-    newFolder.setOnAction(e -> folder.createNewFolder());
-    delete.setOnAction(e -> folder.delete());
-    rename.setOnAction(e -> folder.rename());
+    newFile.setOnAction(e -> {
+      System.out.println("DEBUG: New File button clicked");
+      folderTree.createNewFile();
+    });
+    newFolder.setOnAction(e -> {
+      System.out.println("DEBUG: New Folder button clicked");
+      folderTree.createNewFolder();
+    });
+    delete.setOnAction(e -> {
+      System.out.println("DEBUG: Delete button clicked");
+      folderTree.delete();
+    });
+    rename.setOnAction(e -> {
+      System.out.println("DEBUG: Rename button clicked");
+      folderTree.rename();
+    });
 
     // The onEditCommit logic needs to be updated to handle renaming properly
     tree.setOnEditCommit(event -> {
@@ -115,7 +128,7 @@ public class Sidebar extends Dialog {
       }
     });
     // Add this inside the start() method from the example above
-    var folderContextMenu = new FolderContextMenu(folder);
+    var folderContextMenu = new FolderContextMenu(folderTree);
     tree.setContextMenu(folderContextMenu);
     autoSaveTimeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
       if (this.file != null) {
@@ -151,7 +164,12 @@ public class Sidebar extends Dialog {
         try {
 
           String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-          textarea.setText(content);
+          // Use setContent for auto mode detection if it's an Editor
+          if (textarea instanceof Editor) {
+            ((Editor) textarea).setContent(content);
+          } else {
+            textarea.setText(content);
+          }
           autoSaveTimeline.playFromStart();
 
         } catch (IOException e) {
@@ -168,6 +186,15 @@ public class Sidebar extends Dialog {
     setAlignment(Pos.TOP_LEFT);
     getChildren().add(sidebar);
 
+  }
+
+  /**
+   * Refresh the file tree to show newly created files
+   */
+  public void refresh() {
+    if (folderTree != null) {
+      folderTree.refresh();
+    }
   }
 
 }

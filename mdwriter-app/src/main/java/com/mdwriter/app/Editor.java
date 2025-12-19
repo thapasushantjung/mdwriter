@@ -50,6 +50,13 @@ public class Editor extends TextArea {
     }
     
     /**
+     * Enable proposal mode without setting template (for loading existing proposal files)
+     */
+    public void enableProposalModeOnly() {
+        this.proposalMode = true;
+    }
+    
+    /**
      * Disable proposal mode, return to normal markdown
      */
     public void disableProposalMode() {
@@ -57,6 +64,34 @@ public class Editor extends TextArea {
         // Re-render current content in normal mode
         String currentText = getText();
         renderNormalMode(currentText);
+    }
+    
+    /**
+     * Set content and auto-detect mode based on content
+     * If content has proposal YAML front matter, enable proposal mode
+     * Otherwise, use normal mode
+     */
+    public void setContent(String content) {
+        if (isProposalContent(content)) {
+            this.proposalMode = true;
+        } else {
+            this.proposalMode = false;
+        }
+        setText(content);
+    }
+    
+    /**
+     * Check if content is a proposal file based on YAML front matter
+     */
+    public static boolean isProposalContent(String content) {
+        if (content == null || content.isEmpty()) {
+            return false;
+        }
+        // Check for YAML front matter with proposal-specific keys
+        return content.startsWith("---") && 
+               (content.contains("title:") && 
+                content.contains("subject:") && 
+                content.contains("students:"));
     }
     
     public WebView getWebView() {
@@ -258,33 +293,45 @@ public class Editor extends TextArea {
                 .toc-link .toc-page { flex: 0 0 auto; }
                 
                 @media print {
-                    * {
+                    html, body {
+                        background: white !important;
                         margin: 0 !important;
                         padding: 0 !important;
-                    }
-                    html, body {
-                        background: none !important;
                         -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
                     }
                     .page {
-                        padding: 1cm !important;
+                        background: white !important;
+                        width: 210mm !important;
+                        height: 297mm !important;
+                        min-height: 297mm !important;
+                        max-height: 297mm !important;
+                        padding: 1in 1.25in !important;
+                        margin: 0 !important;
                         box-shadow: none !important;
                         border: none !important;
-                        width: 100% !important;
-                        min-height: auto !important;
-                        page-break-after: always;
+                        box-sizing: border-box !important;
+                        page-break-after: always !important;
                         page-break-inside: avoid !important;
                         position: relative !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                        overflow: hidden !important;
                     }
                     .page:last-child {
                         page-break-after: auto !important;
                     }
+                    .main-content {
+                        flex: 1 1 auto !important;
+                    }
+                    h1, h2, h3 {
+                        page-break-after: avoid;
+                    }
                     .footer-number {
-                        position: absolute !important;
-                        bottom: 0.5cm !important;
-                        left: 0 !important;
-                        width: 100% !important;
+                        flex-shrink: 0 !important;
+                        margin-top: auto !important;
                         text-align: center !important;
+                        padding-bottom: 0.5in !important;
                     }
                     @page {
                         margin: 0;

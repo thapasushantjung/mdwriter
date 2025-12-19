@@ -195,21 +195,34 @@ public class FolderTree {
 
   }
 
+  /**
+   * Refresh the tree by reloading the root's children
+   */
+  public void refresh() {
+    if (treeView != null && treeView.getRoot() != null) {
+      loadChildrenInBackground(treeView.getRoot());
+    }
+  }
+
   public void createNewFile() {
     TreeItem<FileItem> selectedItem = treeView.getSelectionModel().getSelectedItem();
-    if (selectedItem == null)
-      return; // Nothing selected
+    if (selectedItem == null) {
+      // Show alert if nothing is selected
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("No Selection");
+      alert.setHeaderText("No folder selected");
+      alert.setContentText("Please select a folder first to create a new file.");
+      alert.showAndWait();
+      return;
+    }
 
     // Determine the parent directory for the new file
     TreeItem<FileItem> parentDir = selectedItem.getValue().isDirectory()
         ? selectedItem
         : selectedItem.getParent();
 
-    // TODO: Ensure the parent's children are loaded before adding a new one
+    // Ensure the parent's children are loaded before adding a new one
     if (parentDir.getChildren().contains(DUMMY_NODE)) {
-      // If not loaded, expand it to trigger loading, then try again.
-      // This is a complex scenario, for simplicity we'll just add it.
-      // A more robust solution would wait for the load to complete.
       parentDir.getChildren().remove(DUMMY_NODE);
     }
 
@@ -230,8 +243,15 @@ public class FolderTree {
   // createNewFolder would be very similar
   public void createNewFolder() {
     TreeItem<FileItem> selectedItem = treeView.getSelectionModel().getSelectedItem();
-    if (selectedItem == null)
-      return; // Nothing selected
+    if (selectedItem == null) {
+      // Show alert if nothing is selected
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("No Selection");
+      alert.setHeaderText("No folder selected");
+      alert.setContentText("Please select a folder first to create a new folder.");
+      alert.showAndWait();
+      return;
+    }
 
     // Determine the parent directory for the new file
     TreeItem<FileItem> parentDir = selectedItem.getValue().isDirectory()
@@ -240,9 +260,6 @@ public class FolderTree {
 
     // Ensure the parent's children are loaded before adding a new one
     if (parentDir.getChildren().contains(DUMMY_NODE)) {
-      // If not loaded, expand it to trigger loading, then try again.
-      // This is a complex scenario, for simplicity we'll just add it.
-      // A more robust solution would wait for the load to complete.
       parentDir.getChildren().remove(DUMMY_NODE);
     }
 
@@ -259,6 +276,7 @@ public class FolderTree {
       treeView.edit(newItem);
     });
   }
+
 
   public void rename() {
     TreeItem<FileItem> selectedItem = treeView.getSelectionModel().getSelectedItem();
