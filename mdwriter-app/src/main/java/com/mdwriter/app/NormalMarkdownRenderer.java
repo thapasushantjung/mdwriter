@@ -9,8 +9,9 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.util.Arrays;
 
 /**
- * Simple markdown renderer for normal mode
- * Renders markdown to clean HTML without proposal-specific formatting
+ * Simple markdown renderer for normal mode.
+ * Renders markdown to clean HTML without proposal-specific formatting.
+ * Uses Flexmark for the conversion.
  */
 public class NormalMarkdownRenderer {
     
@@ -30,6 +31,12 @@ public class NormalMarkdownRenderer {
         this.renderer = HtmlRenderer.builder(options).build();
     }
     
+    /**
+     * Renders the markdown text to HTML.
+     * 
+     * @param markdownText The markdown text.
+     * @return The styling HTML string including HighlightJS support.
+     */
     public String render(String markdownText) {
         Node document = parser.parse(markdownText);
         String htmlContent = renderer.render(document);

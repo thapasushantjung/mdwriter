@@ -7,6 +7,10 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 
+/**
+ * Context menu for the File Explorer.
+ * Provides options to create files/folders, delete, and rename items.
+ */
 public class FolderContextMenu extends ContextMenu {
   public FolderContextMenu(FolderTree tree) {
 

@@ -1,6 +1,15 @@
 package com.mdwriter.app;
 
+/**
+ * Holds the default template string for a new Project Proposal.
+ * Contains the YAML Front Matter structure required by the renderer.
+ */
 public class ProposalTemplate {
+    
+    /**
+     * Returns the default Markdown content with YAML front matter.
+     * @return The template string.
+     */
     public static String getDefaultTemplate() {
         return """
 ---

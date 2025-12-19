@@ -8,6 +8,15 @@ import javafx.concurrent.Worker;
 
 import java.io.File;
 
+/**
+ * The core Editor component extending TextArea.
+ * 
+ * Responsibilities:
+ * - Handling text input from the user.
+ * - Managing the WebView synchronization.
+ * - Switching between Normal Markdown Mode and Proposal Mode.
+ * - calculating word counts.
+ */
 public class Editor extends TextArea {
 
     // Flag to determine rendering mode
@@ -19,11 +28,12 @@ public class Editor extends TextArea {
     public Editor(WebView webview, File rootDirectory) {
         this.webview = webview;
         this.rootDirectory = rootDirectory;
-        // Start with empty editor - template is loaded via button click
+        // Start with empty editor - template is loaded via button click or file load
         setText("");
         getStyleClass().add("editor");
         setWrapText(true);
         
+        // Listen for text changes to update the preview
         textProperty().addListener((obs, oldText, newText) -> {
             if (proposalMode) {
                 renderProposalMode(newText);
@@ -48,6 +58,10 @@ public class Editor extends TextArea {
         return wordCount.get();
     }
 
+    /**
+     * Calculates the word count by executing a JavaScript snippet in the WebView.
+     * This ensures the count reflects the rendered content (excluding markdown syntax).
+     */
     private void calculateWordCount() {
         try {
             // Execute JS to get innerText of body and count words
@@ -68,7 +82,8 @@ public class Editor extends TextArea {
     }
     
     /**
-     * Enable proposal mode with template
+     * Enable proposal mode and inject the default proposal template.
+     * This is used when creating a new proposal.
      */
     public void enableProposalMode() {
         this.proposalMode = true;
@@ -124,6 +139,10 @@ public class Editor extends TextArea {
         return webview;
     }
 
+    /**
+     * Renders changes using the NormalMarkdownRenderer.
+     * Used for standard markdown files.
+     */
     private void renderNormalMode(String newText) {
         NormalMarkdownRenderer renderer = new NormalMarkdownRenderer();
         String html = renderer.render(newText);
@@ -134,7 +153,8 @@ public class Editor extends TextArea {
      * Proposal mode rendering - full proposal formatting with pages, TOC, JS
      */
     /**
-     * Proposal mode rendering - full proposal formatting with pages, TOC, JS
+     * Proposal mode rendering - Formatting for academic proposals.
+     * Delegates complex rendering logic to ProposalRenderer.
      */
     private void renderProposalMode(String newText) {
         String fullHtml = new ProposalRenderer().render(newText);

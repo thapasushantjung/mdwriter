@@ -1,0 +1,158 @@
+/* Times New Roman - Regular */
+@font-face {
+    font-family: 'Times New Roman';
+    src: url('{{FONT_REGULAR}}') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Times New Roman - Bold */
+@font-face {
+    font-family: 'Times New Roman';
+    src: url('{{FONT_BOLD}}') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Times New Roman - Italic */
+@font-face {
+    font-family: 'Times New Roman';
+    src: url('{{FONT_ITALIC}}') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+/* Times New Roman - Bold Italic */
+@font-face {
+    font-family: 'Times New Roman';
+    src: url('{{FONT_BOLD_ITALIC}}') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+body {
+    font-family: 'Times New Roman', serif;
+    line-height: 1.5;
+    margin: 0;
+    padding: 20px;
+    background: #f0f0f0;
+}
+
+.page {
+    background: white;
+    width: 21cm;
+    min-height: 29.7cm;
+    padding: 1in 1.25in; 
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    page-break-after: always;
+    position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+}
+.main-content {
+    flex: 1 1 auto;
+}
+.center { text-align: center; }
+.bold { font-weight: bold; }
+.uppercase { text-transform: uppercase; }
+
+.logo {
+    width: 150px;
+    height: auto;
+    margin: 5px 0;
+}
+
+.title-section { margin-top: 10px; margin-bottom: 10px; }
+.submission-section { margin-bottom: 20px; }
+.submitted-by { margin-top: 20px; margin-bottom: 20px; }
+.college-section { margin-top: auto; text-align: center; margin-bottom: 10px; }
+
+.footer-number {
+    position: absolute;
+    bottom: 0.5in;
+    width: 100%;
+    text-align: center;
+    left: 0;
+}
+
+h1 { font-size: 16pt; margin: 10px 0; }
+h2 { font-size: 14pt; margin: 10px 0; }
+h3 { font-size: 13pt; margin: 5px 0; }
+p { font-size: 12pt; margin: 5px 0; }
+
+
+/* TOC Styles */
+.toc-entry { display: flex; align-items: flex-end; margin-bottom: 5px; }
+.toc-text { flex: 0 0 auto; }
+.toc-dots { flex: 1 1 auto; border-bottom: 1px dotted #000; margin: 0 5px; position: relative; top: -4px;}
+.toc-page { flex: 0 0 auto; }
+
+/* Helper for Flexmark generated TOC */
+.toc-list ul { list-style: none; padding: 0; margin: 0; }
+.toc-list li { margin-left: 0; margin-top: 8px; } /* L1 Spacing */
+.toc-list li ul { margin-left: 25px; margin-top: 5px; }
+.toc-list li ul li ul { margin-left: 25px; } /* L3 Indentation */
+.toc-list a, .toc-content a { 
+    text-decoration: none; 
+    color: #000; 
+    cursor: pointer; 
+}
+.toc-list a:hover, .toc-content a:hover { 
+    text-decoration: underline; 
+    color: #0066cc; 
+}
+/* Active link styling after JS processes */
+.toc-link { display: flex; width: 100%; align-items: flex-end; }
+.toc-link .toc-text { flex: 0 0 auto; }
+.toc-link .toc-dots { flex: 1 1 auto; border-bottom: 1px dotted #000; margin: 0 5px; position: relative; top: -4px; }
+.toc-link .toc-page { flex: 0 0 auto; }
+
+@media print {
+    html, body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .page {
+        background: white !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        padding: 1in 1.25in !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        box-sizing: border-box !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+    .page:last-child {
+        page-break-after: auto !important;
+    }
+    .main-content {
+        flex: 1 1 auto !important;
+    }
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    .footer-number {
+        flex-shrink: 0 !important;
+        margin-top: auto !important;
+        text-align: center !important;
+        padding-bottom: 0.5in !important;
+    }
+    @page {
+        margin: 0;
+        size: A4;
+    }
+}

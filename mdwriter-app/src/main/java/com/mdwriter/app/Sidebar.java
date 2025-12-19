@@ -26,6 +26,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+/**
+ * The Sidebar component (File Explorer).
+ * Displays the project file structure, handles file/folder creation, deletion, renaming,
+ * and auto-saves the currently open file.
+ */
 public class Sidebar extends Dialog {
   private File file;
   private Timeline autoSaveTimeline;
@@ -138,6 +143,7 @@ public class Sidebar extends Dialog {
           FileUtils.writeStringToFile(this.file, content, StandardCharsets.UTF_8);
 
           // Update status label to give user feedback
+          // Note: This prints to stdout, could be improved to update a UI label
           String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
           System.out.println("File auto-saved at " + time);
 

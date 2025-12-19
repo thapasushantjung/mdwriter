@@ -19,6 +19,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
+/**
+ * Manages the Application Toolbar and Menu.
+ * Handles actions like Undo, Redo, Theme Switching, PDF Export,
+ * and opening the Sidebar.
+ */
 public class Menu {
   ToolBar toolbar = new ToolBar();
 
@@ -73,6 +78,7 @@ public class Menu {
     HBox.setHgrow(spacer, Priority.ALWAYS);
 
     // Proposal Template Button
+    // Creates a new proposal.md file and switches to proposal mode
     var proposalTemplate = new Button("Proposal Template", new FontIcon(Feather.FILE_TEXT));
     proposalTemplate.getStyleClass().addAll(Styles.FLAT, Styles.ACCENT);
     proposalTemplate.setOnAction((evt -> {
@@ -114,6 +120,7 @@ public class Menu {
     }));
 
     // Export / Print Button - exports HTML and opens in browser for printing
+    // This allows users to use the browser's native print-to-PDF functionality
     var printButton = new Button("Export / Print", new FontIcon(Feather.PRINTER));
     printButton.getStyleClass().addAll(Styles.FLAT, Styles.ACCENT);
     printButton.setOnAction((evt -> {

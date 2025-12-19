@@ -3,6 +3,10 @@ package com.mdwriter.app;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
+/**
+ * A custom VBox-based dialog component.
+ * Used as a base for modal dialogs like the Sidebar and ThemeSelector.
+ */
 public class Dialog extends VBox {
 
   public Dialog(int width, int height) {

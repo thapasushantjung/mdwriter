@@ -10,6 +10,10 @@ import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
 import javafx.scene.control.Button;
 
+/**
+ * Dialog for selecting the application theme.
+ * Uses AtlantaFX themes to provide a modern look and feel.
+ */
 public class ThemeSelector {
 
   public Dialog themes() {

@@ -15,6 +15,10 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.util.StringConverter;
 
+/**
+ * Manages the file system tree view.
+ * Handles background loading of directories and file operations (create, rename, delete).
+ */
 public class FolderTree {
   private TreeView<FileItem> treeView;
 
@@ -118,6 +122,10 @@ public class FolderTree {
     return item;
   }
 
+  /**
+   * Loads children of a directory on a background thread to prevent UI freezing.
+   * @param parent The parent TreeItem to populate.
+   */
   private void loadChildrenInBackground(TreeItem<FileItem> parent) {
     // Show a temporary "Loading..." message
     FileItem loadingItem = new FileItem("Loading...", "", false);
