@@ -1,6 +1,7 @@
 package com.mdwriter.app;
 
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.web.WebView;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -46,6 +47,24 @@ public class Editor extends TextArea {
         webview.getEngine().getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
             if (newState == Worker.State.SUCCEEDED) {
                 calculateWordCount();
+            }
+        });
+
+        // Synchronize scrolling: Editor -> WebView
+        scrollTopProperty().addListener((obs, oldVal, newVal) -> {
+            ScrollBar scrollBar = (ScrollBar) lookup(".scroll-bar:vertical");
+            if (scrollBar != null) {
+                double value = scrollBar.getValue();
+                double max = scrollBar.getMax();
+                double percentage = max > 0 ? value / max : 0;
+                
+                // Execute JS to scroll WebView
+                // (document.body.scrollHeight - window.innerHeight) is the max scrollable amount
+                String script = String.format(
+                    "window.scrollTo(0, (document.body.scrollHeight - window.innerHeight) * %s);", 
+                    String.format(java.util.Locale.US, "%.4f", percentage) // Ensure dot decimal
+                );
+                webview.getEngine().executeScript(script);
             }
         });
     }
